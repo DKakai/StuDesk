@@ -75,15 +75,15 @@ export default function LandingPage() {
       </section>
 
       {/* Transition — gradient to white */}
-      <div className="h-32 bg-gradient-to-b from-black to-stone-50" />
+      <div className="h-20 bg-gradient-to-b from-black to-stone-50" />
 
       {/* Statement — offset layout */}
       <section className="bg-stone-50 pb-32">
        <div className="max-w-4xl mx-auto px-10 text-center">
-          <p className="text-3xl md:text-5xl leading-tight tracking-[-0.02em] text-stone-800 font-medium">
-            Världen har förändrats. Skolan har inte hängt med.
+          <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-800 font-medium">
+            Världen har förändrats.<br />Skolan har inte hängt med.
           </p>
-          <p className="text-3xl md:text-5xl leading-tight tracking-[-0.02em] text-stone-300 font-medium mt-3">
+          <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-400 font-medium mt-3">
             Tills nu.
           </p>
           <p className="text-base text-stone-400 mt-8 max-w-lg mx-auto leading-relaxed">
