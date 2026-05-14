@@ -79,23 +79,17 @@ export default function LandingPage() {
 
       {/* Statement — offset layout */}
       <section className="bg-stone-50 pb-32">
-        <div className="max-w-6xl mx-auto px-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            <div className="md:col-span-7">
-              <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-800 font-medium">
-              Alla branscher har hängt med. Utom en.
-            </p>
-            <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-300 font-medium mt-3">
-              Tills nu.
-            </p>
-            </div>
-            <div className="md:col-span-5 md:pt-6">
-              <p className="text-lg text-stone-400 leading-relaxed">
-                Lärare arbetar reaktivt. Elever får hjälp för sent.
-                Skolledning fattar beslut utan data. StuDesk förändrar det.
-              </p>
-            </div>
-          </div>
+       <div className="max-w-4xl mx-auto px-10 text-center">
+          <p className="text-3xl md:text-5xl leading-tight tracking-[-0.02em] text-stone-800 font-medium">
+            Världen har förändrats. Skolan har inte hängt med.
+          </p>
+          <p className="text-3xl md:text-5xl leading-tight tracking-[-0.02em] text-stone-300 font-medium mt-3">
+            Tills nu.
+          </p>
+          <p className="text-base text-stone-400 mt-8 max-w-lg mx-auto leading-relaxed">
+            Lärare arbetar reaktivt. Elever får hjälp för sent.
+            Skolledning fattar beslut utan data. StuDesk förändrar det.
+          </p>
         </div>
       </section>
 
