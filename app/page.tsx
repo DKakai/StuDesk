@@ -53,7 +53,7 @@ export default function LandingPage() {
         <div className="relative z-10 max-w-6xl mx-auto px-10 pt-32 pb-20 w-full">
           <div className="max-w-3xl">
             <p className="text-sm text-white/30 tracking-[0.15em] uppercase mb-8">AI-driven läroplattform</p>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.15] text-white font-medium tracking-[0.01em]">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.05] text-white font-medium tracking-[0.01em]">
               Varje elev<br />förtjänar en<br /><em>personlig</em> lärare.
             </h1>
             <p className="text-lg text-white/35 mt-8 max-w-md leading-relaxed">
