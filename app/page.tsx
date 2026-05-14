@@ -82,9 +82,12 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-10">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
             <div className="md:col-span-7">
-              <p className="text-4xl md:text-5xl lg:text-6xl leading-[1.15] tracking-[0.02em] text-stone-800 font-medium">
-                Skolan har inte<br />förändrats på<br />hundra år.
-              </p>
+              <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-800 font-medium">
+              Alla branscher har hängt med.<br />Utom en.
+            </p>
+            <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-300 font-medium mt-3">
+              Tills nu.
+            </p>
             </div>
             <div className="md:col-span-5 md:pt-6">
               <p className="text-lg text-stone-400 leading-relaxed">
