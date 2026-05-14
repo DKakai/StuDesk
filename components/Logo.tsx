@@ -32,7 +32,7 @@ export function StuDeskLogo({ size = "md", theme = "dark" }: { size?: "sm" | "md
         </g>
       </svg>
       <span className={`${s.text} tracking-[-0.02em] font-medium ${textClass}`} style={{ fontFamily: 'var(--font-body)' }}>
-        Stu<span className={dimClass}>Desk</span>
+      Stu<span className={dimClass}>Desk</span> <span className={dimClass}>AI</span>
       </span>
     </div>
   )
