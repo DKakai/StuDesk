@@ -103,7 +103,7 @@ export default function LandingPage() {
           {/* Eleven */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
             <div className="md:col-span-5">
-              <p className="text-[14px] text-stone-300 tracking-[0.15em] uppercase mb-4">01 — Eleven</p>
+              <p className="text-[14px] text-stone-400 tracking-[0.15em] uppercase mb-4">01 — Eleven</p>
               <h3 className="text-2xl md:text-3xl font-medium text-stone-800 tracking-[0.02em] leading-[1.2] mb-5">
                 Din egen AI-tutor som förstår vad du behöver.
               </h3>
@@ -130,7 +130,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="md:col-span-5 order-1 md:order-2">
-              <p className="text-[14px] text-stone-300 tracking-[0.15em] uppercase mb-4">02 — Läraren</p>
+              <p className="text-[14px] text-stone-400 tracking-[0.15em] uppercase mb-4">02 — Läraren</p>
               <h3 className="text-2xl md:text-3xl font-medium text-stone-800 tracking-[0.02em] leading-[1.2] mb-5">
                 Insikter som gör undervisningen proaktiv.
               </h3>
@@ -145,7 +145,7 @@ export default function LandingPage() {
           {/* Skolan */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
             <div className="md:col-span-5">
-              <p className="text-[14px] text-stone-300 tracking-[0.15em] uppercase mb-4">03 — Skolan</p>
+              <p className="text-[14px] text-stone-400 tracking-[0.15em] uppercase mb-4">03 — Skolan</p>
               <h3 className="text-2xl md:text-3xl font-medium text-stone-800 tracking-[0.02em] leading-[1.2] mb-5">
                 Ett operativt styrsystem, inte bara en dashboard.
               </h3>
