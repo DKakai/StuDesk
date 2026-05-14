@@ -157,7 +157,7 @@ export default function LandingPage() {
             </div>
             <div className="md:col-span-7 md:col-start-6">
               <div className="relative rounded-2xl overflow-hidden aspect-[16/10]">
-                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=900&q=80')` }} />
+                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=900&q=80')` }} />
                 <div className="absolute inset-0 bg-black/10" />
               </div>
             </div>
