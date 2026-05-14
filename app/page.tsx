@@ -54,7 +54,7 @@ export default function LandingPage() {
           <div className="max-w-3xl">
             <p className="text-sm text-white/30 tracking-[0.15em] uppercase mb-8">AI-driven läroplattform</p>
             <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.15] text-white font-medium tracking-[0.01em]">
-              Varje elev<br />förtjänar en<br />personlig lärare.
+              Varje elev<br />förtjänar en<br /><span className="underline decoration-white/40 underline-offset-8">personlig</span> lärare.
             </h1>
             <p className="text-lg text-white/35 mt-8 max-w-md leading-relaxed">
               StuDesk ger varje elev en AI-tutor som förstår kursplanen — och ger läraren insikter att agera på.
