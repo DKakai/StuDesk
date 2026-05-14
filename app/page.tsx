@@ -83,7 +83,7 @@ export default function LandingPage() {
           <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-800 font-medium">
             Världen har förändrats.<br />Skolan har inte hängt med.
           </p>
-          <p className="text-3xl md:text-5xl leading-tight tracking-[0.02em] text-stone-350 font-medium mt-3">
+          <p className="text-3xl md:text-5xl leading-tight tracking-[-0.02em] font-medium mt-3" style={{ color: '#b8b2ac' }}>
             Tills nu.
           </p>
           <p className="text-base text-stone-400 mt-8 max-w-lg mx-auto leading-relaxed">
