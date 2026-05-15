@@ -35,7 +35,7 @@ export default function LandingPage() {
 
       {/* Nav */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${pastHero ? "bg-white/90 backdrop-blur-md border-b border-stone-200/50" : "bg-transparent"}`}>
-        <div className="flex justify-between items-center px-10 py-5 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center px-6 py-5 max-w-7xl mx-auto">
           <Link href="/"><StuDeskLogo size="md" theme={pastHero ? "dark" : "light"} /></Link>
           <div className="flex items-center gap-6">
             <Link href="/auth?mode=login" className={`text-sm transition ${pastHero ? "text-stone-500 hover:text-stone-900" : "text-white/50 hover:text-white"}`}>Logga in</Link>
