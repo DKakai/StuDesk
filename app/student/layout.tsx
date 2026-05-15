@@ -42,6 +42,12 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
             }`}>
             Hem
           </Link>
+          <Link href="/student/calendar"
+            className={`w-full flex items-center px-2.5 py-2 rounded-md text-[13px] transition mb-px ${
+              pathname === "/student/calendar" ? "bg-stone-900 text-white" : "text-stone-500 hover:text-stone-800 hover:bg-stone-50"
+            }`}>
+            Kalender
+          </Link>
 
           <p className="text-[10px] uppercase tracking-[0.15em] text-stone-300 px-2 mb-1.5 mt-4">Kurser</p>
           {courses.map((course) => {
