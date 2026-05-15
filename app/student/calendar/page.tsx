@@ -1,5 +1,5 @@
 "use client"
-
+import React from "react"
 import { useState } from "react"
 
 type Lesson = {
@@ -215,7 +215,7 @@ export default function CalendarPage() {
                 <tbody>
                   {(() => {
                     const allTimes = [...new Set(lessons.map(l => l.startTime))].sort()
-                    const rows: JSX.Element[] = []
+                    const rows: React.ReactElement[] = []
                     let lunchInserted = false
 
                     allTimes.forEach(time => {
