@@ -6,100 +6,87 @@ type CalendarEvent = {
   id: string
   title: string
   courseCode: string
-  type: "lesson" | "todo" | "test" | "lab" | "assignment" | "presentation"
-  day: number // 0=mån
+  type: "lesson" | "lab" | "mentor" | "test" | "assignment" | "presentation"
+  day: number
   startTime: string
   endTime?: string
   room?: string
   teacher?: string
-  done?: boolean
 }
 
-const events: CalendarEvent[] = [
-  // Måndag
+const lessons: CalendarEvent[] = [
   { id: "l1", title: "Matematik 2b", courseCode: "MA2B", type: "lesson", day: 0, startTime: "08:15", endTime: "09:15", room: "R201", teacher: "Maria Lindström" },
   { id: "l2", title: "Matematik 2b", courseCode: "MA2B", type: "lesson", day: 0, startTime: "09:30", endTime: "10:30", room: "R201", teacher: "Maria Lindström" },
-  { id: "l3", title: "Engelska 5", courseCode: "EN5", type: "lesson", day: 0, startTime: "12:30", endTime: "13:30", room: "R108", teacher: "Karin Holm" },
-  { id: "l4", title: "Mentorstid", courseCode: "MA2B", type: "lesson", day: 0, startTime: "13:45", endTime: "14:45", room: "R201", teacher: "Maria Lindström" },
+  { id: "l3", title: "Engelska 5", courseCode: "EN5", type: "lesson", day: 0, startTime: "13:00", endTime: "14:00", room: "R108", teacher: "Karin Holm" },
+  { id: "l4", title: "Mentorstid", courseCode: "", type: "mentor", day: 0, startTime: "14:15", endTime: "15:00", room: "R201", teacher: "Maria Lindström" },
 
-  // Tisdag
   { id: "l5", title: "Fysik 1", courseCode: "FY1", type: "lab", day: 1, startTime: "08:15", endTime: "09:15", room: "Labbsal A", teacher: "Per Ekström" },
   { id: "l6", title: "Fysik 1", courseCode: "FY1", type: "lab", day: 1, startTime: "09:30", endTime: "10:30", room: "Labbsal A", teacher: "Per Ekström" },
-  { id: "l7", title: "Svenska 1", courseCode: "SV1", type: "lesson", day: 1, startTime: "12:30", endTime: "13:30", room: "R102", teacher: "Karin Holm" },
+  { id: "l7", title: "Svenska 1", courseCode: "SV1", type: "lesson", day: 1, startTime: "13:00", endTime: "14:00", room: "R102", teacher: "Karin Holm" },
 
-  // Onsdag
   { id: "l8", title: "Historia 1b", courseCode: "HI1B", type: "lesson", day: 2, startTime: "08:15", endTime: "09:15", room: "R102", teacher: "Karin Holm" },
-  { id: "l9", title: "Matematik 2b", courseCode: "MA2B", type: "lesson", day: 2, startTime: "10:45", endTime: "11:45", room: "R201", teacher: "Maria Lindström" },
-  { id: "l10", title: "Samhällskunskap 1b", courseCode: "SH1B", type: "lesson", day: 2, startTime: "12:30", endTime: "13:30", room: "R112", teacher: "Anna Karlsson" },
+  { id: "l9", title: "Matematik 2b", courseCode: "MA2B", type: "lesson", day: 2, startTime: "09:30", endTime: "10:30", room: "R201", teacher: "Maria Lindström" },
+  { id: "l10", title: "Samhällskunskap 1b", courseCode: "SH1B", type: "lesson", day: 2, startTime: "13:00", endTime: "14:00", room: "R112", teacher: "Anna Karlsson" },
 
-  // Torsdag
   { id: "l11", title: "Engelska 5", courseCode: "EN5", type: "lesson", day: 3, startTime: "08:15", endTime: "09:15", room: "R108", teacher: "Karin Holm" },
   { id: "l12", title: "Samhällskunskap 1b", courseCode: "SH1B", type: "lesson", day: 3, startTime: "09:30", endTime: "10:30", room: "R112", teacher: "Anna Karlsson" },
-  { id: "l13", title: "Svenska 1", courseCode: "SV1", type: "lesson", day: 3, startTime: "12:30", endTime: "13:30", room: "R102", teacher: "Karin Holm" },
+  { id: "l13", title: "Svenska 1", courseCode: "SV1", type: "lesson", day: 3, startTime: "13:00", endTime: "14:00", room: "R102", teacher: "Karin Holm" },
 
-  // Fredag
   { id: "l14", title: "Matematik 2b", courseCode: "MA2B", type: "lesson", day: 4, startTime: "08:15", endTime: "09:15", room: "R201", teacher: "Maria Lindström" },
   { id: "l15", title: "Svenska 1", courseCode: "SV1", type: "lesson", day: 4, startTime: "09:30", endTime: "10:30", room: "R102", teacher: "Karin Holm" },
-  { id: "l16", title: "Historia 1b", courseCode: "HI1B", type: "lesson", day: 4, startTime: "12:30", endTime: "13:30", room: "R102", teacher: "Karin Holm" },
-
-  // Att göra (visas som markers på rätt dag)
-  { id: "t1", title: "Övningsuppgifter — Andragradsekvationer", courseCode: "MA2B", type: "assignment", day: 3, startTime: "23:59" },
-  { id: "t2", title: "Läs kapitel 8 — Krafter och rörelse", courseCode: "FY1", type: "assignment", day: 4, startTime: "23:59" },
-  { id: "t3", title: "Prov — Andragradsekvationer", courseCode: "MA2B", type: "test", day: 0, startTime: "08:15", endTime: "09:15", room: "R201" },
-  { id: "t4", title: "Inlämning — Argumenterande text", courseCode: "SV1", type: "assignment", day: 1, startTime: "23:59" },
-  { id: "t5", title: "Labb — Kraftmätning", courseCode: "FY1", type: "lab", day: 2, startTime: "08:15", endTime: "10:30", room: "Labbsal A" },
-  { id: "t6", title: "Oral presentation", courseCode: "EN5", type: "presentation", day: 3, startTime: "08:15", endTime: "09:15", room: "R108" },
+  { id: "l16", title: "Historia 1b", courseCode: "HI1B", type: "lesson", day: 4, startTime: "13:00", endTime: "14:00", room: "R102", teacher: "Karin Holm" },
 ]
 
-const timeSlots = ["08:15", "09:30", "10:45", "12:30", "13:45", "15:00"]
-const days = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
+const todos: CalendarEvent[] = [
+  { id: "t1", title: "Övningsuppgifter", courseCode: "MA2B", type: "assignment", day: 3, startTime: "" },
+  { id: "t2", title: "Läs kapitel 8", courseCode: "FY1", type: "assignment", day: 4, startTime: "" },
+]
+
+const timeSlots = [
+  { time: "08:15", label: "08:15" },
+  { time: "09:30", label: "09:30" },
+  { time: "10:30", label: "10:30", isBreak: true, breakLabel: "Lunch" },
+  { time: "13:00", label: "13:00" },
+  { time: "14:15", label: "14:15" },
+]
+
 const daysShort = ["Mån", "Tis", "Ons", "Tors", "Fre"]
 const dates = ["12 maj", "13 maj", "14 maj", "15 maj", "16 maj"]
+const today = 2
 
-const typeStyles: Record<string, { bg: string; text: string; border: string }> = {
-  lesson: { bg: "bg-stone-800", text: "text-white", border: "border-stone-800" },
-  lab: { bg: "bg-indigo-600", text: "text-white", border: "border-indigo-600" },
-  test: { bg: "bg-red-500", text: "text-white", border: "border-red-500" },
-  assignment: { bg: "bg-amber-50", text: "text-amber-800", border: "border-amber-200" },
-  presentation: { bg: "bg-emerald-600", text: "text-white", border: "border-emerald-600" },
+const typeStyles: Record<string, { bg: string; border: string; text: string }> = {
+  lesson:       { bg: "bg-stone-50",    border: "border-stone-300",  text: "text-stone-700" },
+  lab:          { bg: "bg-indigo-50",   border: "border-indigo-300", text: "text-indigo-700" },
+  mentor:       { bg: "bg-stone-50",    border: "border-stone-300",  text: "text-stone-500" },
+  test:         { bg: "bg-red-50",      border: "border-red-300",    text: "text-red-700" },
+  assignment:   { bg: "bg-amber-50",    border: "border-amber-300",  text: "text-amber-700" },
+  presentation: { bg: "bg-emerald-50",  border: "border-emerald-300",text: "text-emerald-700" },
 }
 
-const typeLabels: Record<string, string> = {
-  lesson: "Lektion",
-  lab: "Labb",
-  test: "Prov",
-  assignment: "Uppgift",
-  presentation: "Redovisning",
-}
-
-type ViewMode = "week" | "list"
+type ViewMode = "week" | "day"
 
 export default function CalendarPage() {
   const [view, setView] = useState<ViewMode>("week")
-  const [selectedWeek] = useState("v.20")
-  const today = 2 // onsdag
+  const [selectedDay, setSelectedDay] = useState(today)
 
-  function getEventsForSlot(day: number, time: string) {
-    return events.filter(e => e.day === day && e.startTime === time && e.type === "lesson")
+  function getLesson(day: number, time: string) {
+    return lessons.find(e => e.day === day && e.startTime === time)
   }
 
-  function getTodosForDay(day: number) {
-    return events.filter(e => e.day === day && e.type !== "lesson")
+  function getTodos(day: number) {
+    return todos.filter(e => e.day === day)
   }
 
-  // Alla events sorterade för listvyn
-  const allEventsSorted = [...events].sort((a, b) => {
-    if (a.day !== b.day) return a.day - b.day
-    return a.startTime.localeCompare(b.startTime)
-  })
+  const dayLessons = lessons.filter(l => l.day === selectedDay).sort((a, b) => a.startTime.localeCompare(b.startTime))
+  const dayTodos = getTodos(selectedDay)
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ fontFamily: 'var(--font-body)' }}>
-      <div className="max-w-6xl mx-auto px-8">
+      <div className="max-w-5xl mx-auto px-8">
 
         <div className="pt-10 pb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>Kalender</h1>
+            <h1 className="text-3xl tracking-tight">Kalender</h1>
             <p className="text-sm text-stone-400 mt-1">Vecka 20 · 12–16 maj 2026</p>
           </div>
           <div className="flex items-center gap-3">
@@ -108,15 +95,32 @@ export default function CalendarPage() {
                 className={`text-xs px-3 py-1.5 rounded-md transition ${view === "week" ? "bg-white text-stone-800 shadow-sm font-medium" : "text-stone-500"}`}>
                 Vecka
               </button>
-              <button onClick={() => setView("list")}
-                className={`text-xs px-3 py-1.5 rounded-md transition ${view === "list" ? "bg-white text-stone-800 shadow-sm font-medium" : "text-stone-500"}`}>
-                Lista
+              <button onClick={() => setView("day")}
+                className={`text-xs px-3 py-1.5 rounded-md transition ${view === "day" ? "bg-white text-stone-800 shadow-sm font-medium" : "text-stone-500"}`}>
+                Dag
               </button>
             </div>
-            <select className="text-sm border border-stone-200 rounded-lg px-3 py-1.5 bg-white text-stone-600">
-              <option>v.20</option><option>v.21</option><option>v.22</option>
-            </select>
           </div>
+        </div>
+
+        {/* Dagväljare */}
+        <div className="flex gap-2 mb-6">
+          {daysShort.map((d, i) => (
+            <button key={d} onClick={() => { setSelectedDay(i); if (view === "week") setView("week") }}
+              className={`flex-1 py-3 rounded-xl text-center transition border ${
+                i === today && view === "week"
+                  ? "border-stone-300 bg-stone-50"
+                  : i === selectedDay && view === "day"
+                  ? "border-stone-800 bg-stone-800 text-white"
+                  : "border-stone-200 bg-white hover:border-stone-300"
+              }`}>
+              <p className={`text-xs font-medium ${i === selectedDay && view === "day" ? "text-white" : i === today ? "text-stone-800" : "text-stone-500"}`}>{d}</p>
+              <p className={`text-[10px] mt-0.5 ${i === selectedDay && view === "day" ? "text-white/60" : "text-stone-300"}`}>{dates[i]}</p>
+              {getTodos(i).length > 0 && (
+                <div className={`w-1 h-1 rounded-full mx-auto mt-1.5 ${i === selectedDay && view === "day" ? "bg-white/50" : "bg-amber-400"}`} />
+              )}
+            </button>
+          ))}
         </div>
 
         {/* VECKOVY */}
@@ -124,111 +128,105 @@ export default function CalendarPage() {
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
             <table className="w-full text-sm table-fixed">
               <thead>
-                <tr className="border-b border-stone-200 bg-stone-50/50">
-                  <th className="w-16 px-3 py-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal text-left">Tid</th>
+                <tr className="border-b border-stone-100">
+                  <th className="w-14 px-3 py-3 text-[10px] uppercase tracking-widest text-stone-300 font-normal text-left" />
                   {daysShort.map((d, i) => (
-                    <th key={d} className={`px-2 py-3 text-left ${i === today ? "bg-stone-100/50" : ""}`}>
-                      <p className={`text-[10px] uppercase tracking-widest font-normal ${i === today ? "text-stone-800 font-medium" : "text-stone-400"}`}>{d}</p>
-                      <p className={`text-[10px] ${i === today ? "text-stone-600" : "text-stone-300"}`}>{dates[i]}</p>
-                    </th>
+                    <th key={d} className={`px-1 py-3 text-[10px] uppercase tracking-widest font-normal text-center ${i === today ? "text-stone-800 font-medium" : "text-stone-400"}`}>{d}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {timeSlots.map(time => (
-                  <tr key={time} className="border-b border-stone-50">
-                    <td className="px-3 py-1 text-xs font-mono text-stone-400 align-top pt-3">{time}</td>
-                    {days.map((_, dayIdx) => {
-                      const lesson = getEventsForSlot(dayIdx, time)
-                      const isToday = dayIdx === today
-                      return (
-                        <td key={dayIdx} className={`px-1 py-1 align-top ${isToday ? "bg-stone-50/50" : ""}`} style={{ height: 56 }}>
-                          {lesson.map(ev => {
-                            const style = typeStyles[ev.type] || typeStyles.lesson
-                            return (
-                              <div key={ev.id} className={`w-full text-left px-2.5 py-2 rounded-lg ${style.bg} ${style.text} border ${style.border}`}>
-                                <p className="text-xs font-medium truncate">{ev.title}</p>
-                                <p className="text-[10px] opacity-70 truncate mt-0.5">{ev.room}</p>
-                              </div>
-                            )
-                          })}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
-
-                {/* Att göra-rad */}
-                <tr className="border-t border-stone-200 bg-stone-50/30">
-                  <td className="px-3 py-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal align-top">Att göra</td>
-                  {days.map((_, dayIdx) => {
-                    const todos = getTodosForDay(dayIdx)
+                {timeSlots.map((slot) => {
+                  if (slot.isBreak) {
                     return (
-                      <td key={dayIdx} className={`px-1 py-2 align-top ${dayIdx === today ? "bg-stone-100/30" : ""}`}>
-                        {todos.map(ev => {
-                          const style = typeStyles[ev.type] || typeStyles.assignment
-                          return (
-                            <div key={ev.id} className={`w-full text-left px-2.5 py-1.5 rounded-lg mb-1 ${style.bg} ${style.text} border ${style.border}`}>
-                              <p className="text-[10px] font-medium truncate">{ev.title}</p>
-                              <p className="text-[9px] opacity-60 truncate">{ev.courseCode} · {typeLabels[ev.type]}</p>
-                            </div>
-                          )
-                        })}
-                      </td>
+                      <tr key={slot.time} className="border-b border-stone-50">
+                        <td colSpan={6} className="py-2 text-center">
+                          <p className="text-[10px] text-stone-300 tracking-widest uppercase">{slot.breakLabel} · 10:30–13:00</p>
+                        </td>
+                      </tr>
                     )
-                  })}
-                </tr>
+                  }
+                  return (
+                    <tr key={slot.time} className="border-b border-stone-50">
+                      <td className="px-3 py-1 text-[11px] font-mono text-stone-300 align-top pt-3">{slot.label}</td>
+                      {daysShort.map((_, dayIdx) => {
+                        const ev = getLesson(dayIdx, slot.time)
+                        if (!ev) return <td key={dayIdx} className="px-1 py-1" style={{ height: 52 }} />
+                        const s = typeStyles[ev.type]
+                        return (
+                          <td key={dayIdx} className="px-1 py-1" style={{ height: 52 }}>
+                            <div className={`w-full px-2.5 py-2 rounded-lg border ${s.bg} ${s.border} ${s.text}`}>
+                              <p className="text-xs font-medium truncate">{ev.title}</p>
+                              <p className="text-[10px] opacity-60 truncate mt-0.5">{ev.room}</p>
+                            </div>
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
         )}
 
-        {/* LISTVY */}
-        {view === "list" && (
-          <div className="mb-10 space-y-6">
-            {days.map((dayName, dayIdx) => {
-              const dayEvents = allEventsSorted.filter(e => e.day === dayIdx)
-              if (dayEvents.length === 0) return null
-              return (
-                <div key={dayIdx}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <p className={`text-sm font-medium ${dayIdx === today ? "text-stone-800" : "text-stone-500"}`}>{dayName}</p>
-                    <p className="text-xs text-stone-300">{dates[dayIdx]}</p>
-                    {dayIdx === today && <span className="text-[10px] bg-stone-800 text-white px-2 py-0.5 rounded-full">Idag</span>}
+        {/* DAGVY */}
+        {view === "day" && (
+          <div className="mb-10">
+            <div className="space-y-2">
+              {dayLessons.map((ev) => {
+                const s = typeStyles[ev.type]
+                const isAfternoon = ev.startTime >= "13:00"
+                const prevLesson = dayLessons[dayLessons.indexOf(ev) - 1]
+                const showLunch = isAfternoon && prevLesson && prevLesson.startTime < "12:00"
+
+                return (
+                  <div key={ev.id}>
+                    {showLunch && (
+                      <div className="py-4 text-center">
+                        <p className="text-[10px] text-stone-300 tracking-widest uppercase">Lunch · 10:30–13:00</p>
+                      </div>
+                    )}
+                    <div className={`flex items-center gap-4 p-4 rounded-xl border ${s.bg} ${s.border}`}>
+                      <div className="text-right w-14 shrink-0">
+                        <p className="text-xs font-mono text-stone-500">{ev.startTime}</p>
+                        <p className="text-[10px] font-mono text-stone-300">{ev.endTime}</p>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${s.text}`}>{ev.title}</p>
+                        <p className="text-xs text-stone-400 mt-0.5">{ev.teacher}{ev.room ? ` · ${ev.room}` : ""}</p>
+                      </div>
+                      {ev.courseCode && <span className="text-[10px] font-mono text-stone-300">{ev.courseCode}</span>}
+                    </div>
                   </div>
-                  <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-                    {dayEvents.map((ev, i) => {
-                      const style = typeStyles[ev.type] || typeStyles.lesson
-                      const isTask = ev.type !== "lesson"
-                      return (
-                        <div key={ev.id} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-stone-100" : ""}`}>
-                          <div className={`w-2 h-2 rounded-full ${style.bg}`} />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm text-stone-800">{ev.title}</p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[10px] font-mono text-stone-400">{ev.courseCode}</span>
-                              <span className="text-[10px] text-stone-300">·</span>
-                              <span className="text-[10px] text-stone-400">{typeLabels[ev.type]}</span>
-                              {ev.room && <>
-                                <span className="text-[10px] text-stone-300">·</span>
-                                <span className="text-[10px] text-stone-400">{ev.room}</span>
-                              </>}
-                            </div>
-                          </div>
-                          <div className="text-right shrink-0">
-                            {ev.startTime !== "23:59" ? (
-                              <p className="text-xs text-stone-500">{ev.startTime}{ev.endTime ? `–${ev.endTime}` : ""}</p>
-                            ) : (
-                              <p className="text-xs text-stone-400">Deadline</p>
-                            )}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
+                )
+              })}
+
+              {dayLessons.length === 0 && (
+                <div className="bg-white border border-stone-200 rounded-xl p-12 text-center">
+                  <p className="text-sm text-stone-400">Inga lektioner denna dag.</p>
                 </div>
-              )
-            })}
+              )}
+            </div>
+
+            {/* Att göra för denna dag */}
+            {dayTodos.length > 0 && (
+              <div className="mt-6">
+                <p className="text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-2 font-medium">Deadline denna dag</p>
+                {dayTodos.map(t => {
+                  const s = typeStyles[t.type]
+                  return (
+                    <div key={t.id} className={`flex items-center gap-4 p-3 rounded-lg border ${s.bg} ${s.border} mb-1.5`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${s.border.replace("border", "bg")}`} />
+                      <div className="flex-1">
+                        <p className={`text-xs font-medium ${s.text}`}>{t.title}</p>
+                        <p className="text-[10px] text-stone-400">{t.courseCode}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         )}
 
@@ -237,12 +235,10 @@ export default function CalendarPage() {
           {[
             { type: "lesson", label: "Lektion" },
             { type: "lab", label: "Labb" },
-            { type: "test", label: "Prov" },
             { type: "assignment", label: "Uppgift" },
-            { type: "presentation", label: "Redovisning" },
           ].map(l => (
             <span key={l.type} className="flex items-center gap-1.5 text-[10px] text-stone-400">
-              <div className={`w-2.5 h-2 rounded-sm ${typeStyles[l.type].bg}`} />
+              <div className={`w-3 h-2 rounded-sm border ${typeStyles[l.type].bg} ${typeStyles[l.type].border}`} />
               {l.label}
             </span>
           ))}
