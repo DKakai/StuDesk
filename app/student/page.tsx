@@ -5,31 +5,41 @@ import { useState } from "react"
 
 type TodoItem = {
   id: string; title: string; courseCode: string
-  type: "assignment" | "test" | "reading" | "lab" | "presentation"
-  dueDate: string; dueDay: string; dueDetail: string; done: boolean
+  type: "assignment" | "reading"
+  dueDay: string; dueDetail: string; done: boolean
+}
+
+type ExamItem = {
+  id: string; title: string; courseCode: string
+  type: "test" | "lab" | "presentation"
+  day: string; detail: string
 }
 
 const initialTodos: TodoItem[] = [
-  { id: "t1", title: "Övningsuppgifter — Andragradsekvationer", courseCode: "MA2B", type: "assignment", dueDate: "2026-05-15", dueDay: "Imorgon", dueDetail: "15 maj", done: false },
-  { id: "t2", title: "Läs kapitel 8 — Krafter och rörelse", courseCode: "FY1", type: "reading", dueDate: "2026-05-16", dueDay: "Fredag", dueDetail: "16 maj", done: false },
-  { id: "t3", title: "Prov — Andragradsekvationer", courseCode: "MA2B", type: "test", dueDate: "2026-05-19", dueDay: "Måndag", dueDetail: "19 maj", done: false },
-  { id: "t4", title: "Inlämning — Argumenterande text", courseCode: "SV1", type: "assignment", dueDate: "2026-05-20", dueDay: "Tisdag", dueDetail: "20 maj", done: false },
-  { id: "t5", title: "Labb — Kraftmätning", courseCode: "FY1", type: "lab", dueDate: "2026-05-21", dueDay: "Onsdag", dueDetail: "21 maj", done: false },
-  { id: "t6", title: "Oral presentation — My future career", courseCode: "EN5", type: "presentation", dueDate: "2026-05-22", dueDay: "Torsdag", dueDetail: "22 maj", done: false },
-  { id: "t7", title: "Läs kapitel 12 — Industriella revolutionen", courseCode: "HI1B", type: "reading", dueDate: "2026-05-16", dueDay: "Fredag", dueDetail: "16 maj", done: true },
-  { id: "t8", title: "Quiz — Newtons lagar", courseCode: "FY1", type: "test", dueDate: "2026-05-14", dueDay: "Idag", dueDetail: "14 maj", done: true },
+  { id: "t1", title: "Övningsuppgifter — Andragradsekvationer", courseCode: "MA2B", type: "assignment", dueDay: "Imorgon", dueDetail: "15 maj", done: false },
+  { id: "t2", title: "Läs kapitel 8 — Krafter och rörelse", courseCode: "FY1", type: "reading", dueDay: "Fredag", dueDetail: "16 maj", done: false },
+  { id: "t3", title: "Inlämning — Argumenterande text", courseCode: "SV1", type: "assignment", dueDay: "Tisdag", dueDetail: "20 maj", done: false },
+  { id: "t4", title: "Läs kapitel 12 — Industriella rev.", courseCode: "HI1B", type: "reading", dueDay: "Fredag", dueDetail: "16 maj", done: true },
+  { id: "t5", title: "Gör övning 4.3–4.7", courseCode: "MA2B", type: "assignment", dueDay: "Måndag", dueDetail: "19 maj", done: false },
+]
+
+const exams: ExamItem[] = [
+  { id: "e1", title: "Prov — Andragradsekvationer", courseCode: "MA2B", type: "test", day: "Måndag 19 maj", detail: "08:15 · R201" },
+  { id: "e2", title: "Labb — Kraftmätning", courseCode: "FY1", type: "lab", day: "Onsdag 21 maj", detail: "08:15 · Labbsal A" },
+  { id: "e3", title: "Oral presentation", courseCode: "EN5", type: "presentation", day: "Torsdag 22 maj", detail: "08:15 · R108" },
 ]
 
 const courses = [
   { id: "matematik-2b", name: "Matematik 2b", code: "MA2B", teacher: "Maria Lindström", currentTopic: "Andragradsekvationer", todoCount: 2, image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80" },
   { id: "svenska-1", name: "Svenska 1", code: "SV1", teacher: "Karin Holm", currentTopic: "Argumenterande text", todoCount: 1, image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&q=80" },
-  { id: "engelska-5", name: "Engelska 5", code: "EN5", teacher: "Karin Holm", currentTopic: "Oral presentation", todoCount: 1, image: "https://images.unsplash.com/photo-1543109740-4bdb38fda756?w=600&q=80" },
-  { id: "fysik-1", name: "Fysik 1", code: "FY1", teacher: "Per Ekström", currentTopic: "Krafter och rörelse", todoCount: 2, image: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=600&q=80" },
+  { id: "engelska-5", name: "Engelska 5", code: "EN5", teacher: "Karin Holm", currentTopic: "Oral presentation", todoCount: 0, image: "https://images.unsplash.com/photo-1543109740-4bdb38fda756?w=600&q=80" },
+  { id: "fysik-1", name: "Fysik 1", code: "FY1", teacher: "Per Ekström", currentTopic: "Krafter och rörelse", todoCount: 1, image: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=600&q=80" },
   { id: "historia-1b", name: "Historia 1b", code: "HI1B", teacher: "Karin Holm", currentTopic: "Industriella revolutionen", todoCount: 0, image: "https://images.unsplash.com/photo-1461360370896-922624d12571?w=600&q=80" },
   { id: "samhallskunskap-1b", name: "Samhällskunskap 1b", code: "SH1B", teacher: "Anna Karlsson", currentTopic: "Demokrati och mänskliga rättigheter", todoCount: 0, image: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&q=80" },
 ]
 
-const typeLabels: Record<string, string> = { assignment: "Uppgift", test: "Prov", reading: "Läsning", lab: "Labb", presentation: "Redovisning" }
+const typeLabels: Record<string, string> = { assignment: "Uppgift", reading: "Läsning", test: "Prov", lab: "Labb", presentation: "Redovisning" }
+const examColors: Record<string, { dot: string }> = { test: { dot: "bg-red-400" }, lab: { dot: "bg-indigo-400" }, presentation: { dot: "bg-emerald-400" } }
 
 export default function StudentHome() {
   const [todos, setTodos] = useState(initialTodos)
@@ -37,73 +47,107 @@ export default function StudentHome() {
 
   function toggleTodo(id: string) { setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t)) }
 
-  const activeTodos = todos.filter(t => !t.done).sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+  const activeTodos = todos.filter(t => !t.done).sort((a, b) => a.dueDetail.localeCompare(b.dueDetail))
   const doneTodos = todos.filter(t => t.done)
-  const visibleTodos = showAllTodos ? activeTodos : activeTodos.slice(0, 2)
-  const hiddenCount = activeTodos.length - 2
+  const visibleTodos = showAllTodos ? activeTodos : activeTodos.slice(0, 3)
+  const hiddenCount = activeTodos.length - 3
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ fontFamily: 'var(--font-body)' }}>
-      <div className="max-w-4xl mx-auto px-8">
+      <div className="max-w-5xl mx-auto px-8">
 
         <div className="pt-10 pb-8">
-          <h1 className="text-3xl tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>Hem</h1>
+          <h1 className="text-3xl tracking-tight">Hem</h1>
           <p className="text-sm text-stone-400 mt-1">Onsdag 14 maj 2026</p>
         </div>
 
-        {/* ATT GÖRA */}
-        <div className="mb-10">
-          <p className="text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-3 font-medium">Att göra</p>
-          <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-            {visibleTodos.map((todo, i) => {
-              const isUrgent = todo.dueDay === "Idag" || todo.dueDay === "Imorgon"
-              return (
-                <div key={todo.id} className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-stone-100" : ""} hover:bg-stone-50 transition`}>
-                  <button onClick={() => toggleTodo(todo.id)} className="w-5 h-5 rounded-full border-2 border-stone-300 hover:border-stone-500 transition shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-stone-800">{todo.title}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] font-mono text-stone-400">{todo.courseCode}</span>
-                      <span className="text-[10px] text-stone-300">·</span>
-                      <span className="text-[10px] text-stone-400">{typeLabels[todo.type]}</span>
+        {/* Två kolumner: Att göra + Att öva inför */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+          {/* ATT GÖRA */}
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-3 font-medium">Att göra</p>
+            <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
+              {visibleTodos.map((todo, i) => {
+                const isUrgent = todo.dueDay === "Idag" || todo.dueDay === "Imorgon"
+                return (
+                  <div key={todo.id} className={`flex items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-stone-100" : ""} hover:bg-stone-50 transition`}>
+                    <button onClick={() => toggleTodo(todo.id)} className="w-[18px] h-[18px] rounded-full border-2 border-stone-300 hover:border-stone-500 transition shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-stone-700">{todo.title}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-mono text-stone-400">{todo.courseCode}</span>
+                        <span className="text-[10px] text-stone-300">·</span>
+                        <span className="text-[10px] text-stone-400">{typeLabels[todo.type]}</span>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className={`text-xs ${isUrgent ? "text-red-500 font-medium" : "text-stone-500"}`}>{todo.dueDay}</p>
+                      <p className="text-[10px] text-stone-300">{todo.dueDetail}</p>
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className={`text-xs ${isUrgent ? "text-red-500 font-medium" : "text-stone-500"}`}>{todo.dueDay}</p>
-                    <p className="text-[10px] text-stone-300">{todo.dueDetail}</p>
-                  </div>
+                )
+              })}
+              {!showAllTodos && hiddenCount > 0 && (
+                <button onClick={() => setShowAllTodos(true)} className="w-full px-4 py-2.5 border-t border-stone-100 text-xs text-stone-400 hover:text-stone-600 hover:bg-stone-50 transition text-center">
+                  Visa {hiddenCount} till
+                </button>
+              )}
+              {showAllTodos && activeTodos.length > 3 && (
+                <button onClick={() => setShowAllTodos(false)} className="w-full px-4 py-2.5 border-t border-stone-100 text-xs text-stone-400 hover:text-stone-600 hover:bg-stone-50 transition text-center">
+                  Visa mindre
+                </button>
+              )}
+              {activeTodos.length === 0 && (
+                <div className="px-4 py-8 text-center"><p className="text-sm text-stone-400">Allt klart!</p></div>
+              )}
+            </div>
+            {doneTodos.length > 0 && (
+              <details className="mt-2">
+                <summary className="text-[11px] text-stone-400 cursor-pointer hover:text-stone-600 transition px-1 py-1">{doneTodos.length} avklarade</summary>
+                <div className="bg-white border border-stone-100 rounded-xl overflow-hidden mt-1">
+                  {doneTodos.map((todo, i) => (
+                    <div key={todo.id} className={`flex items-center gap-3 px-4 py-2.5 ${i > 0 ? "border-t border-stone-50" : ""} opacity-40`}>
+                      <button onClick={() => toggleTodo(todo.id)} className="w-[18px] h-[18px] rounded-full border-2 border-stone-300 bg-stone-200 flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      </button>
+                      <p className="text-sm text-stone-500 line-through flex-1">{todo.title}</p>
+                    </div>
+                  ))}
                 </div>
-              )
-            })}
-            {!showAllTodos && hiddenCount > 0 && (
-              <button onClick={() => setShowAllTodos(true)} className="w-full px-5 py-3 border-t border-stone-100 text-xs text-stone-400 hover:text-stone-600 hover:bg-stone-50 transition text-center">
-                Visa {hiddenCount} till
-              </button>
-            )}
-            {showAllTodos && activeTodos.length > 2 && (
-              <button onClick={() => setShowAllTodos(false)} className="w-full px-5 py-3 border-t border-stone-100 text-xs text-stone-400 hover:text-stone-600 hover:bg-stone-50 transition text-center">
-                Visa mindre
-              </button>
-            )}
-            {activeTodos.length === 0 && (
-              <div className="px-5 py-8 text-center"><p className="text-sm text-stone-400">Inga uppgifter att göra. Bra jobbat!</p></div>
+              </details>
             )}
           </div>
-          {doneTodos.length > 0 && (
-            <details className="mt-2">
-              <summary className="text-xs text-stone-400 cursor-pointer hover:text-stone-600 transition px-1 py-1">{doneTodos.length} avklarade</summary>
-              <div className="bg-white border border-stone-100 rounded-xl overflow-hidden mt-1">
-                {doneTodos.map((todo, i) => (
-                  <div key={todo.id} className={`flex items-center gap-4 px-5 py-3 ${i > 0 ? "border-t border-stone-50" : ""} opacity-50`}>
-                    <button onClick={() => toggleTodo(todo.id)} className="w-5 h-5 rounded-full border-2 border-stone-300 bg-stone-200 flex items-center justify-center shrink-0">
-                      <svg className="w-3 h-3 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                    </button>
-                    <p className="text-sm text-stone-500 line-through flex-1">{todo.title}</p>
+
+          {/* ATT ÖVA INFÖR */}
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-3 font-medium">Att öva inför</p>
+            <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
+              {exams.map((exam, i) => {
+                const color = examColors[exam.type] || { dot: "bg-stone-400" }
+                return (
+                  <div key={exam.id} className={`flex items-center gap-3 px-4 py-3.5 ${i > 0 ? "border-t border-stone-100" : ""}`}>
+                    <div className={`w-2 h-2 rounded-full shrink-0 ${color.dot}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-stone-700">{exam.title}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-mono text-stone-400">{exam.courseCode}</span>
+                        <span className="text-[10px] text-stone-300">·</span>
+                        <span className="text-[10px] text-stone-400">{typeLabels[exam.type]}</span>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-xs text-stone-500">{exam.day}</p>
+                      <p className="text-[10px] text-stone-300">{exam.detail}</p>
+                    </div>
                   </div>
-                ))}
-              </div>
-            </details>
-          )}
+                )
+              })}
+              {exams.length === 0 && (
+                <div className="px-4 py-8 text-center"><p className="text-sm text-stone-400">Inga kommande prov eller redovisningar.</p></div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* KURSER */}
