@@ -38,12 +38,16 @@ const lessons: Lesson[] = [
   { id:"l17", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:4, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
 ]
 
-const slotsConfig = [
-  { id: 0, start: "08:15", end: "09:15" },
-  { id: 1, start: "09:30", end: "10:30" },
-  { id: 2, start: "13:00", end: "14:00" },
-  { id: 3, start: "14:15", end: "15:15" },
-]
+// Schema-struktur: pass, rast, pass, lunch, pass, rast, pass
+const scheduleRows: { type: "slot"; id: number; start: string; end: string }[] | { type: "break"; label: string }[] = [
+  { type: "slot", id: 0, start: "08:15", end: "09:15" },
+  { type: "break", label: "09:15–09:30" },
+  { type: "slot", id: 1, start: "09:30", end: "10:30" },
+  { type: "break", label: "Lunch" },
+  { type: "slot", id: 2, start: "13:00", end: "14:00" },
+  { type: "break", label: "14:00–14:15" },
+  { type: "slot", id: 3, start: "14:15", end: "15:15" },
+] as any[]
 
 const daysShort = ["Mån", "Tis", "Ons", "Tors", "Fre"]
 const daysFull = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
@@ -174,9 +178,7 @@ export default function CalendarPage() {
                 <tr>
                   <th className="w-24 py-4 px-4 text-left bg-stone-50 border-b border-r border-stone-200" />
                   {daysShort.map((d, i) => (
-                    <th key={d} className={`py-4 px-2 text-center border-b border-r border-stone-200 last:border-r-0 ${
-                      i === today ? "bg-blue-50" : "bg-stone-50"
-                    }`}>
+                    <th key={d} className={`py-4 px-2 text-center border-b border-r border-stone-200 last:border-r-0 ${i === today ? "bg-blue-50" : "bg-stone-50"}`}>
                       <button onClick={() => { setSelectedDay(i); setView("day") }} className="hover:opacity-70 transition">
                         <p className={`text-xs tracking-wide ${i === today ? "text-blue-700 font-bold" : "text-stone-500 font-medium"}`}>{d}</p>
                         <p className={`text-xs mt-0.5 ${i === today ? "text-blue-500" : "text-stone-400"}`}>{dates[i]}</p>
@@ -186,69 +188,55 @@ export default function CalendarPage() {
                 </tr>
               </thead>
               <tbody>
-                {slotsConfig.slice(0, 2).map(slot => (
-                  <tr key={slot.id}>
-                    <td className="px-4 py-0 align-middle border-r border-b border-stone-200 bg-stone-50/50">
-                      <p className="text-xs font-semibold text-stone-600">{slot.start}</p>
-                      <p className="text-[10px] text-stone-300 mt-0.5">{slot.end}</p>
-                    </td>
-                    {[0,1,2,3,4].map(day => {
-                      const ev = lessons.find(l => l.day === day && l.slot === slot.id)
-                      const isToday = day === today
-                      if (!ev) return <td key={day} className={`border-r border-b border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }} />
-                      const c = getColor(ev.courseCode)
-                      return (
-                        <td key={day} className={`p-0 border-r border-b border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }}>
-                          <button onClick={() => { setSelectedDay(day); setView("day") }}
-                            className={`w-full h-full text-left px-3 py-2 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
-                            <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
-                            <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
-                          </button>
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
-
-                {/* Lunch */}
-                <tr>
-                  <td className="px-4 py-2 border-r border-b border-stone-200 bg-stone-50/50">
-                    <p className="text-xs font-medium text-stone-400">Lunch</p>
-                  </td>
-                  {[0,1,2,3,4].map(day => {
-                    const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
-                    const gap = findLunch(dayL)
+                {(scheduleRows as any[]).map((row: any, idx: number) => {
+                  if (row.type === "break") {
+                    const isLunch = row.label === "Lunch"
                     return (
-                      <td key={day} className={`px-2 py-2 border-r border-b border-stone-200 last:border-r-0 text-center ${day === today ? "bg-blue-50/30" : ""}`}>
-                        <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
-                      </td>
-                    )
-                  })}
-                </tr>
-
-                {slotsConfig.slice(2).map(slot => (
-                  <tr key={slot.id}>
-                    <td className="px-4 py-0 align-middle border-r border-b border-stone-200 last:border-b-0 bg-stone-50/50">
-                      <p className="text-xs font-semibold text-stone-600">{slot.start}</p>
-                      <p className="text-[10px] text-stone-300 mt-0.5">{slot.end}</p>
-                    </td>
-                    {[0,1,2,3,4].map(day => {
-                      const ev = lessons.find(l => l.day === day && l.slot === slot.id)
-                      const isToday = day === today
-                      if (!ev) return <td key={day} className={`border-r border-b border-stone-200 last:border-r-0 last:border-b-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }} />
-                      const c = getColor(ev.courseCode)
-                      return (
-                        <td key={day} className={`p-0 border-r border-b border-stone-200 last:border-r-0 last:border-b-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }}>
-                          <button onClick={() => { setSelectedDay(day); setView("day") }}
-                            className={`w-full h-full text-left px-3 py-2 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
-                            <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
-                            <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
-                          </button>
+                      <tr key={`break-${idx}`} className={isLunch ? "" : ""}>
+                        <td className={`px-4 border-r border-stone-200 ${isLunch ? "py-2 bg-stone-50/50" : "py-1"}`}>
+                          <p className={`text-[10px] ${isLunch ? "text-stone-400 font-medium" : "text-stone-300"}`}>{row.label}</p>
                         </td>
-                      )
-                    })}
-                  </tr>
-                ))}
+                        {[0,1,2,3,4].map(day => {
+                          if (isLunch) {
+                            const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
+                            const gap = findLunch(dayL)
+                            return (
+                              <td key={day} className={`px-2 py-2 border-r border-stone-200 last:border-r-0 text-center bg-stone-50/50 ${day === today ? "bg-blue-50/20" : ""}`}>
+                                <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
+                              </td>
+                            )
+                          }
+                          return <td key={day} className={`border-r border-stone-200 last:border-r-0 ${day === today ? "bg-blue-50/10" : ""}`} />
+                        })}
+                      </tr>
+                    )
+                  }
+
+                  const slot = row as { type: "slot"; id: number; start: string; end: string }
+                  return (
+                    <tr key={`slot-${slot.id}`} className="border-b border-stone-200">
+                      <td className="px-4 py-0 align-middle border-r border-stone-200 bg-stone-50/50">
+                        <p className="text-xs font-semibold text-stone-600">{slot.start}</p>
+                        <p className="text-[10px] text-stone-300 mt-0.5">{slot.end}</p>
+                      </td>
+                      {[0,1,2,3,4].map(day => {
+                        const ev = lessons.find(l => l.day === day && l.slot === slot.id)
+                        const isToday = day === today
+                        if (!ev) return <td key={day} className={`border-r border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }} />
+                        const c = getColor(ev.courseCode)
+                        return (
+                          <td key={day} className={`p-0 border-r border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }}>
+                            <button onClick={() => { setSelectedDay(day); setView("day") }}
+                              className={`w-full h-full text-left px-3 py-2 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
+                              <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
+                              <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
+                            </button>
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
