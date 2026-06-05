@@ -174,7 +174,7 @@ export default function CalendarPage() {
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
 
             {/* Header */}
-            <div className="flex border-b border-stone-200 bg-stone-50">
+            <div className="flex border-b border-stone-200 bg-stone-50 mb-4">
               <div className="w-20 shrink-0" />
               {daysShort.map((d, i) => (
                 <button key={d} onClick={() => { setSelectedDay(i); setView("day") }}
@@ -187,7 +187,7 @@ export default function CalendarPage() {
 
             {scheduleRows.map((row: any, idx: number) => {
               if (row.type === "gap") {
-                return <div key={`gap-${idx}`} className="h-3" />
+                return <div key={`gap-${idx}`} className="h-6" />
               }
 
               if (row.type === "lunch") {
