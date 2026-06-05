@@ -79,9 +79,32 @@ export default function CalendarPage() {
 
   const dayLessons = lessons.filter(l => l.day === selectedDay).sort((a, b) => a.startTime.localeCompare(b.startTime))
   const lunch = findLunch(dayLessons)
-
   const morningLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) < timeToMin(lunch.before)) : dayLessons
   const afternoonLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) >= timeToMin(lunch.before)) : []
+
+  function LessonCard({ ev }: { ev: Lesson }) {
+    const c = getColor(ev.courseCode)
+    return (
+      <div className={`flex items-center rounded-xl border-2 ${c.border} ${c.bg} overflow-hidden`}>
+        <div className="w-24 shrink-0 py-4 pl-5">
+          <p className="text-sm font-medium text-stone-700">{ev.startTime}</p>
+          <p className="text-xs text-stone-400">{ev.endTime}</p>
+        </div>
+        <div className="flex-1 py-4 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className={`text-sm font-semibold ${c.text}`}>{ev.title}</p>
+            {ev.type === "lab" && <span className={`text-[9px] ${c.text} opacity-60 border ${c.border} rounded px-1.5 py-0.5`}>Labb</span>}
+            {ev.type === "mentor" && <span className="text-[9px] text-stone-400 border border-stone-200 rounded px-1.5 py-0.5">Mentor</span>}
+          </div>
+          <p className="text-xs text-stone-400 mt-0.5">{ev.teacher}</p>
+        </div>
+        <div className="text-right shrink-0 pr-5 py-4">
+          <p className="text-xs text-stone-500">{ev.room}</p>
+          {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ fontFamily: 'var(--font-body)' }}>
@@ -137,29 +160,7 @@ export default function CalendarPage() {
             </div>
           ) : (
             <div className="mb-10 space-y-3">
-              {morningLessons.map(ev => {
-                const c = getColor(ev.courseCode)
-                return (
-                  <div key={ev.id} className={`flex items-center rounded-xl border ${c.border} ${c.bg} overflow-hidden`}>
-                    <div className="w-24 shrink-0 py-4 pl-5">
-                      <p className="text-sm font-medium text-stone-700">{ev.startTime}</p>
-                      <p className="text-xs text-stone-400">{ev.endTime}</p>
-                    </div>
-                    <div className="flex-1 py-4 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className={`text-sm font-medium ${c.text}`}>{ev.title}</p>
-                        {ev.type === "lab" && <span className={`text-[9px] ${c.text} opacity-60 border ${c.border} rounded px-1.5 py-0.5`}>Labb</span>}
-                        {ev.type === "mentor" && <span className="text-[9px] text-stone-400 border border-stone-200 rounded px-1.5 py-0.5">Mentor</span>}
-                      </div>
-                      <p className="text-xs text-stone-400 mt-0.5">{ev.teacher}</p>
-                    </div>
-                    <div className="text-right shrink-0 pr-5 py-4">
-                      <p className="text-xs text-stone-500">{ev.room}</p>
-                      {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
-                    </div>
-                  </div>
-                )
-              })}
+              {morningLessons.map(ev => <LessonCard key={ev.id} ev={ev} />)}
 
               {lunch && (
                 <div className="flex items-center gap-4 py-2">
@@ -169,29 +170,7 @@ export default function CalendarPage() {
                 </div>
               )}
 
-              {afternoonLessons.map(ev => {
-                const c = getColor(ev.courseCode)
-                return (
-                  <div key={ev.id} className={`flex items-center rounded-xl border ${c.border} ${c.bg} overflow-hidden`}>
-                    <div className="w-24 shrink-0 py-4 pl-5">
-                      <p className="text-sm font-medium text-stone-700">{ev.startTime}</p>
-                      <p className="text-xs text-stone-400">{ev.endTime}</p>
-                    </div>
-                    <div className="flex-1 py-4 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className={`text-sm font-medium ${c.text}`}>{ev.title}</p>
-                        {ev.type === "lab" && <span className={`text-[9px] ${c.text} opacity-60 border ${c.border} rounded px-1.5 py-0.5`}>Labb</span>}
-                        {ev.type === "mentor" && <span className="text-[9px] text-stone-400 border border-stone-200 rounded px-1.5 py-0.5">Mentor</span>}
-                      </div>
-                      <p className="text-xs text-stone-400 mt-0.5">{ev.teacher}</p>
-                    </div>
-                    <div className="text-right shrink-0 pr-5 py-4">
-                      <p className="text-xs text-stone-500">{ev.room}</p>
-                      {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
-                    </div>
-                  </div>
-                )
-              })}
+              {afternoonLessons.map(ev => <LessonCard key={ev.id} ev={ev} />)}
             </div>
           )}
         </>)}
@@ -199,77 +178,88 @@ export default function CalendarPage() {
         {/* VECKOVY */}
         {view === "week" && (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
-            <table className="w-full text-sm table-fixed">
-              <thead>
-                <tr className="border-b border-stone-200 bg-stone-50">
-                  <th className="w-20 px-4 py-4 text-left">
-                    <p className="text-xs text-stone-400">Tid</p>
-                  </th>
-                  {daysShort.map((d, i) => (
-                    <th key={d} className={`px-2 py-4 text-center ${i === today ? "bg-stone-100" : ""}`}>
-                      <p className={`text-sm font-medium ${i === today ? "text-stone-900" : "text-stone-600"}`}>{d}</p>
-                      <p className={`text-[11px] mt-0.5 ${i === today ? "text-stone-500" : "text-stone-400"}`}>{dates[i]}</p>
-                      {i === today && <div className="w-1.5 h-1.5 rounded-full bg-stone-800 mx-auto mt-1.5" />}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {weekSlots.slice(0, 2).map(time => (
-                  <tr key={time} className="border-b border-stone-100">
-                    <td className="px-4 py-3 align-middle">
-                      <p className="text-sm font-medium text-stone-500">{time}</p>
-                    </td>
-                    {daysShort.map((_, dayIdx) => {
-                      const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
-                      if (!ev) return <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }} />
-                      const c = getColor(ev.courseCode)
-                      return (
-                        <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }}>
-                          <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                            className={`w-full h-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
-                            <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
-                            <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
-                          </button>
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
+            {/* Header */}
+            <div className="grid grid-cols-6 border-b border-stone-200 bg-stone-50">
+              <div className="px-4 py-4">
+                <p className="text-xs text-stone-400">Tid</p>
+              </div>
+              {daysShort.map((d, i) => (
+                <div key={d} className={`px-2 py-4 text-center ${i === today ? "bg-stone-100" : ""}`}>
+                  <p className={`text-sm font-medium ${i === today ? "text-stone-900" : "text-stone-600"}`}>{d}</p>
+                  <p className={`text-[11px] mt-0.5 ${i === today ? "text-stone-500" : "text-stone-400"}`}>{dates[i]}</p>
+                  {i === today && <div className="w-1.5 h-1.5 rounded-full bg-stone-800 mx-auto mt-1.5" />}
+                </div>
+              ))}
+            </div>
 
-                <tr>
-                  <td colSpan={6} className="py-3 bg-stone-50/50">
-                    <div className="flex items-center gap-3 px-4">
-                      <div className="flex-1 h-px bg-stone-200" />
-                      <p className="text-xs text-stone-400 font-medium">Lunch</p>
-                      <div className="flex-1 h-px bg-stone-200" />
-                    </div>
-                  </td>
-                </tr>
+            {/* Förmiddag */}
+            {weekSlots.slice(0, 2).map(time => (
+              <div key={time}>
+                {/* Tidslinje */}
+                <div className="grid grid-cols-6 border-b border-stone-100">
+                  <div className="px-4 py-1">
+                    <p className="text-xs font-medium text-stone-500 -translate-y-0.5">{time}</p>
+                  </div>
+                  {daysShort.map((_, i) => <div key={i} className={`${i === today ? "bg-stone-50/50" : ""}`} />)}
+                </div>
+                {/* Block */}
+                <div className="grid grid-cols-6">
+                  <div className={`${today === -1 ? "" : ""}`} />
+                  {daysShort.map((_, dayIdx) => {
+                    const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
+                    if (!ev) return <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }} />
+                    const c = getColor(ev.courseCode)
+                    return (
+                      <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }}>
+                        <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
+                          className={`w-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
+                          <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
+                          <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
 
-                {weekSlots.slice(2).map(time => (
-                  <tr key={time} className="border-b border-stone-100">
-                    <td className="px-4 py-3 align-middle">
-                      <p className="text-sm font-medium text-stone-500">{time}</p>
-                    </td>
-                    {daysShort.map((_, dayIdx) => {
-                      const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
-                      if (!ev) return <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }} />
-                      const c = getColor(ev.courseCode)
-                      return (
-                        <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }}>
-                          <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                            className={`w-full h-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
-                            <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
-                            <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
-                          </button>
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/* Lunch */}
+            <div className="py-3 bg-stone-50/50">
+              <div className="flex items-center gap-3 px-4">
+                <div className="flex-1 h-px bg-stone-200" />
+                <p className="text-xs text-stone-400 font-medium">Lunch</p>
+                <div className="flex-1 h-px bg-stone-200" />
+              </div>
+            </div>
+
+            {/* Eftermiddag */}
+            {weekSlots.slice(2).map(time => (
+              <div key={time}>
+                <div className="grid grid-cols-6 border-b border-stone-100">
+                  <div className="px-4 py-1">
+                    <p className="text-xs font-medium text-stone-500 -translate-y-0.5">{time}</p>
+                  </div>
+                  {daysShort.map((_, i) => <div key={i} className={`${i === today ? "bg-stone-50/50" : ""}`} />)}
+                </div>
+                <div className="grid grid-cols-6">
+                  <div />
+                  {daysShort.map((_, dayIdx) => {
+                    const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
+                    if (!ev) return <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }} />
+                    const c = getColor(ev.courseCode)
+                    return (
+                      <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }}>
+                        <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
+                          className={`w-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
+                          <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
+                          <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
@@ -286,7 +276,7 @@ export default function CalendarPage() {
             const c = getColor(l.code)
             return (
               <span key={l.code} className="flex items-center gap-1.5 text-[10px] text-stone-400">
-                <div className={`w-3 h-2 rounded-sm border ${c.bg} ${c.border}`} />
+                <div className={`w-3 h-2 rounded-sm border-2 ${c.bg} ${c.border}`} />
                 {l.label}
               </span>
             )
