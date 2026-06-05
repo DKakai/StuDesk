@@ -38,8 +38,7 @@ const lessons: Lesson[] = [
   { id:"l17", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:4, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
 ]
 
-// Schema-struktur: pass, rast, pass, lunch, pass, rast, pass
-const scheduleRows: { type: "slot"; id: number; start: string; end: string }[] | { type: "break"; label: string }[] = [
+const scheduleRows: any[] = [
   { type: "slot", id: 0, start: "08:15", end: "09:15" },
   { type: "break", label: "09:15–09:30" },
   { type: "slot", id: 1, start: "09:30", end: "10:30" },
@@ -47,7 +46,7 @@ const scheduleRows: { type: "slot"; id: number; start: string; end: string }[] |
   { type: "slot", id: 2, start: "13:00", end: "14:00" },
   { type: "break", label: "14:00–14:15" },
   { type: "slot", id: 3, start: "14:15", end: "15:15" },
-] as any[]
+]
 
 const daysShort = ["Mån", "Tis", "Ons", "Tors", "Fre"]
 const daysFull = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
@@ -99,6 +98,15 @@ export default function CalendarPage() {
           <p className="text-xs text-stone-500">{ev.room}</p>
           {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
         </div>
+      </div>
+    )
+  }
+
+  function TimeLabel({ time, bold }: { time: string; bold?: boolean }) {
+    return (
+      <div className="flex items-center justify-end gap-1">
+        <p className={`text-[11px] ${bold ? "text-stone-600 font-semibold" : "text-stone-300"}`}>{time}</p>
+        <div className={`w-4 border-t ${bold ? "border-stone-300" : "border-stone-200"}`} />
       </div>
     )
   }
@@ -173,72 +181,81 @@ export default function CalendarPage() {
         {/* VECKOVY */}
         {view === "week" && (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
-            <table className="w-full table-fixed border-collapse">
-              <thead>
-                <tr>
-                  <th className="w-24 py-4 px-4 text-left bg-stone-50 border-b border-r border-stone-200" />
-                  {daysShort.map((d, i) => (
-                    <th key={d} className={`py-4 px-2 text-center border-b border-r border-stone-200 last:border-r-0 ${i === today ? "bg-blue-50" : "bg-stone-50"}`}>
-                      <button onClick={() => { setSelectedDay(i); setView("day") }} className="hover:opacity-70 transition">
-                        <p className={`text-xs tracking-wide ${i === today ? "text-blue-700 font-bold" : "text-stone-500 font-medium"}`}>{d}</p>
-                        <p className={`text-xs mt-0.5 ${i === today ? "text-blue-500" : "text-stone-400"}`}>{dates[i]}</p>
-                      </button>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {(scheduleRows as any[]).map((row: any, idx: number) => {
-                  if (row.type === "break") {
-                    const isLunch = row.label === "Lunch"
-                    return (
-                      <tr key={`break-${idx}`} className={isLunch ? "" : ""}>
-                        <td className={`px-4 border-r border-stone-200 ${isLunch ? "py-2 bg-stone-50/50" : "py-1"}`}>
-                          <p className={`text-[10px] ${isLunch ? "text-stone-400 font-medium" : "text-stone-300"}`}>{row.label}</p>
-                        </td>
-                        {[0,1,2,3,4].map(day => {
-                          if (isLunch) {
-                            const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
-                            const gap = findLunch(dayL)
-                            return (
-                              <td key={day} className={`px-2 py-2 border-r border-stone-200 last:border-r-0 text-center bg-stone-50/50 ${day === today ? "bg-blue-50/20" : ""}`}>
-                                <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
-                              </td>
-                            )
-                          }
-                          return <td key={day} className={`border-r border-stone-200 last:border-r-0 ${day === today ? "bg-blue-50/10" : ""}`} />
-                        })}
-                      </tr>
-                    )
-                  }
 
-                  const slot = row as { type: "slot"; id: number; start: string; end: string }
-                  return (
-                    <tr key={`slot-${slot.id}`} className="border-b border-stone-200">
-                      <td className="px-4 py-0 align-middle border-r border-stone-200 bg-stone-50/50">
-                        <p className="text-xs font-semibold text-stone-600">{slot.start}</p>
-                        <p className="text-[10px] text-stone-300 mt-0.5">{slot.end}</p>
-                      </td>
-                      {[0,1,2,3,4].map(day => {
-                        const ev = lessons.find(l => l.day === day && l.slot === slot.id)
-                        const isToday = day === today
-                        if (!ev) return <td key={day} className={`border-r border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }} />
-                        const c = getColor(ev.courseCode)
+            {/* Header */}
+            <div className="flex border-b border-stone-200 bg-stone-50">
+              <div className="w-20 shrink-0" />
+              {daysShort.map((d, i) => (
+                <button key={d} onClick={() => { setSelectedDay(i); setView("day") }}
+                  className={`flex-1 py-4 text-center border-l border-stone-200 transition hover:bg-stone-100 ${i === today ? "bg-blue-50" : ""}`}>
+                  <p className={`text-xs tracking-wide ${i === today ? "text-blue-700 font-bold" : "text-stone-500 font-medium"}`}>{d}</p>
+                  <p className={`text-xs mt-0.5 ${i === today ? "text-blue-500" : "text-stone-400"}`}>{dates[i]}</p>
+                </button>
+              ))}
+            </div>
+
+            {/* Rader */}
+            {scheduleRows.map((row: any, idx: number) => {
+              if (row.type === "break") {
+                const isLunch = row.label === "Lunch"
+                return (
+                  <div key={`break-${idx}`} className={`flex ${isLunch ? "bg-stone-50/50" : ""}`}>
+                    <div className="w-20 shrink-0 flex items-center justify-end pr-3">
+                      <p className={`text-[10px] ${isLunch ? "text-stone-400 font-medium" : "text-stone-300"}`}>{row.label}</p>
+                    </div>
+                    {[0,1,2,3,4].map(day => {
+                      if (isLunch) {
+                        const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
+                        const gap = findLunch(dayL)
                         return (
-                          <td key={day} className={`p-0 border-r border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }}>
-                            <button onClick={() => { setSelectedDay(day); setView("day") }}
-                              className={`w-full h-full text-left px-3 py-2 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
-                              <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
-                              <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
-                            </button>
-                          </td>
+                          <div key={day} className={`flex-1 border-l border-stone-200 py-2 text-center ${day === today ? "bg-blue-50/20" : ""}`}>
+                            <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
+                          </div>
                         )
-                      })}
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                      }
+                      return <div key={day} className={`flex-1 border-l border-stone-100 py-1 ${day === today ? "bg-blue-50/10" : ""}`} />
+                    })}
+                  </div>
+                )
+              }
+
+              const slot = row as { id: number; start: string; end: string }
+              return (
+                <div key={`slot-${slot.id}`}>
+                  {/* Starttid */}
+                  <div className="flex items-center">
+                    <div className="w-20 shrink-0"><TimeLabel time={slot.start} bold /></div>
+                    <div className="flex-1 border-t border-stone-200" />
+                  </div>
+
+                  {/* Block */}
+                  <div className="flex" style={{ minHeight: 68 }}>
+                    <div className="w-20 shrink-0" />
+                    {[0,1,2,3,4].map(day => {
+                      const ev = lessons.find(l => l.day === day && l.slot === slot.id)
+                      const isToday = day === today
+                      if (!ev) return <div key={day} className={`flex-1 border-l border-stone-200 ${isToday ? "bg-blue-50/30" : ""}`} />
+                      const c = getColor(ev.courseCode)
+                      return (
+                        <div key={day} className={`flex-1 border-l border-stone-200 ${isToday ? "bg-blue-50/30" : ""}`}>
+                          <button onClick={() => { setSelectedDay(day); setView("day") }}
+                            className={`w-full h-full text-left px-3 py-2.5 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
+                            <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
+                            <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Sluttid */}
+                  <div className="flex items-center">
+                    <div className="w-20 shrink-0"><TimeLabel time={slot.end} /></div>
+                    <div className="flex-1 border-t border-stone-100" />
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
 
