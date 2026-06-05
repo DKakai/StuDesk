@@ -171,7 +171,7 @@ export default function CalendarPage() {
 
         {/* VECKOVY */}
         {view === "week" && (
-          <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
+          <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10 pb-6">
 
             {/* Header */}
             <div className="flex border-b border-stone-200 bg-stone-50 mb-4">
@@ -239,9 +239,9 @@ export default function CalendarPage() {
                   </div>
 
                   {/* Slutlinje */}
-                  <div className="absolute bottom-0 left-20 right-0 border-t border-stone-100" />
+                  <div className="absolute bottom-0 left-20 right-0 border-t border-stone-200" />
                   <div className="absolute bottom-0 left-0 w-20 flex items-center justify-end translate-y-1/2 z-10">
-                    <p className="text-[11px] text-stone-300 bg-white px-1 pr-2">{slot.end}</p>
+                    <p className="text-[11px] text-stone-600 font-semibold bg-white px-1 pr-2">{slot.end}</p>
                   </div>
                 </div>
               )
