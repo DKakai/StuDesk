@@ -211,30 +211,23 @@ export default function CalendarPage() {
 
               const slot = row as { id: number; start: string; end: string }
               return (
-                <div key={`slot-${slot.id}`}>
-                  <div className="flex" style={{ minHeight: 68 }}>
-                    {/* Tidskolumn — tiderna vid överkant och underkant */}
-                    <div className="w-20 shrink-0 flex flex-col justify-between items-end">
-                      <div className="flex items-center -translate-y-[1px]">
-                        <p className="text-[11px] text-stone-600 font-semibold pr-1">{slot.start}</p>
-                        <div className="w-3 border-t border-stone-300" />
-                      </div>
-                      <div className="flex items-center translate-y-[1px]">
-                        <p className="text-[11px] text-stone-300 pr-1">{slot.end}</p>
-                        <div className="w-3 border-t border-stone-200" />
-                      </div>
-                    </div>
+                <div key={`slot-${slot.id}`} className="relative">
+                  {/* Startlinje */}
+                  <div className="absolute top-0 left-20 right-0 border-t border-stone-200" />
+                  <div className="absolute top-0 left-0 w-20 flex items-center justify-end -translate-y-1/2 z-10">
+                    <p className="text-[11px] text-stone-600 font-semibold bg-white px-1 pr-2">{slot.start}</p>
+                  </div>
 
-                    {/* Dagkolumner med border-top och border-bottom */}
+                  {/* Block */}
+                  <div className="flex" style={{ minHeight: 68 }}>
+                    <div className="w-20 shrink-0" />
                     {[0,1,2,3,4].map(day => {
                       const ev = lessons.find(l => l.day === day && l.slot === slot.id)
                       const isToday = day === today
-                      if (!ev) return (
-                        <div key={day} className={`flex-1 border-l border-t border-b border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`} />
-                      )
+                      if (!ev) return <div key={day} className={`flex-1 border-l border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`} />
                       const c = getColor(ev.courseCode)
                       return (
-                        <div key={day} className={`flex-1 border-l border-t border-b border-stone-200 ${isToday ? "bg-blue-50/20" : ""}`}>
+                        <div key={day} className={`flex-1 border-l border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`}>
                           <button onClick={() => { setSelectedDay(day); setView("day") }}
                             className={`w-full h-full text-left px-3 py-2.5 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
                             <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
@@ -243,6 +236,12 @@ export default function CalendarPage() {
                         </div>
                       )
                     })}
+                  </div>
+
+                  {/* Slutlinje */}
+                  <div className="absolute bottom-0 left-20 right-0 border-t border-stone-100" />
+                  <div className="absolute bottom-0 left-0 w-20 flex items-center justify-end translate-y-1/2 z-10">
+                    <p className="text-[11px] text-stone-300 bg-white px-1 pr-2">{slot.end}</p>
                   </div>
                 </div>
               )
