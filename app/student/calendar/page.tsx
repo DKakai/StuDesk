@@ -23,20 +23,16 @@ const lessons: Lesson[] = [
   { id:"l2", title:"Matematik 2b",       courseCode:"MA2B", type:"lesson", day:0, slot:1, room:"R201", teacher:"Maria Lindström", startTime:"09:30", endTime:"10:30" },
   { id:"l3", title:"Engelska 5",         courseCode:"EN5",  type:"lesson", day:0, slot:2, room:"R108", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
   { id:"l4", title:"Mentorstid",         courseCode:"",     type:"mentor", day:0, slot:3, room:"R201", teacher:"Maria Lindström", startTime:"14:15", endTime:"15:00" },
-
   { id:"l5", title:"Fysik 1 — Labb",    courseCode:"FY1",  type:"lab",    day:1, slot:0, room:"Labbsal A", teacher:"Per Ekström", startTime:"08:15", endTime:"09:15" },
   { id:"l6", title:"Fysik 1 — Labb",    courseCode:"FY1",  type:"lab",    day:1, slot:1, room:"Labbsal A", teacher:"Per Ekström", startTime:"09:30", endTime:"10:30" },
   { id:"l7", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:1, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
   { id:"l8", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:1, slot:3, room:"R102", teacher:"Karin Holm",      startTime:"14:15", endTime:"15:15" },
-
   { id:"l9",  title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:2, slot:0, room:"R102", teacher:"Karin Holm",      startTime:"08:15", endTime:"09:15" },
   { id:"l10", title:"Matematik 2b",      courseCode:"MA2B", type:"lesson", day:2, slot:1, room:"R201", teacher:"Maria Lindström", startTime:"09:30", endTime:"10:30" },
   { id:"l11", title:"Samhällskunskap 1b",courseCode:"SH1B", type:"lesson", day:2, slot:2, room:"R112", teacher:"Anna Karlsson",  startTime:"13:00", endTime:"14:00" },
-
   { id:"l12", title:"Engelska 5",        courseCode:"EN5",  type:"lesson", day:3, slot:0, room:"R108", teacher:"Karin Holm",      startTime:"08:15", endTime:"09:15" },
   { id:"l13", title:"Samhällskunskap 1b",courseCode:"SH1B", type:"lesson", day:3, slot:1, room:"R112", teacher:"Anna Karlsson",  startTime:"09:30", endTime:"10:30" },
   { id:"l14", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:3, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
-
   { id:"l15", title:"Matematik 2b",      courseCode:"MA2B", type:"lesson", day:4, slot:0, room:"R201", teacher:"Maria Lindström", startTime:"08:15", endTime:"09:15" },
   { id:"l16", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:4, slot:1, room:"R102", teacher:"Karin Holm",      startTime:"09:30", endTime:"10:30" },
   { id:"l17", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:4, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
@@ -99,32 +95,6 @@ export default function CalendarPage() {
           <p className="text-xs text-stone-500">{ev.room}</p>
           {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
         </div>
-      </div>
-    )
-  }
-
-  function TimeLine({ time, bold }: { time: string; bold?: boolean }) {
-    return (
-      <div className="flex items-center h-0 relative z-10">
-        <div className="w-16 shrink-0 pr-3 text-right -translate-y-2">
-          <p className={`text-[11px] ${bold ? "text-stone-600 font-semibold" : "text-stone-400"}`}>{time}</p>
-        </div>
-        <div className="flex-1 border-t border-stone-200" />
-      </div>
-    )
-  }
-
-  function WeekBlock({ day, slot }: { day: number; slot: number }) {
-    const ev = lessons.find(l => l.day === day && l.slot === slot)
-    if (!ev) return <div className={`flex-1 border-l border-stone-100 ${day === today ? "bg-blue-50/20" : ""}`} />
-    const c = getColor(ev.courseCode)
-    return (
-      <div className={`flex-1 border-l border-stone-100 ${day === today ? "bg-blue-50/20" : ""}`}>
-        <button onClick={() => { setSelectedDay(day); setView("day") }}
-          className={`w-full h-full text-left px-3 py-3 border-l-[3px] transition hover:brightness-95 ${c.bg} ${c.border}`}>
-          <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
-          <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
-        </button>
       </div>
     )
   }
@@ -199,62 +169,88 @@ export default function CalendarPage() {
         {/* VECKOVY */}
         {view === "week" && (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
+            <table className="w-full table-fixed border-collapse">
+              <thead>
+                <tr>
+                  <th className="w-24 py-4 px-4 text-left bg-stone-50 border-b border-r border-stone-200" />
+                  {daysShort.map((d, i) => (
+                    <th key={d} className={`py-4 px-2 text-center border-b border-r border-stone-200 last:border-r-0 ${
+                      i === today ? "bg-blue-50" : "bg-stone-50"
+                    }`}>
+                      <button onClick={() => { setSelectedDay(i); setView("day") }} className="hover:opacity-70 transition">
+                        <p className={`text-xs tracking-wide ${i === today ? "text-blue-700 font-bold" : "text-stone-500 font-medium"}`}>{d}</p>
+                        <p className={`text-xs mt-0.5 ${i === today ? "text-blue-500" : "text-stone-400"}`}>{dates[i]}</p>
+                      </button>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {slotsConfig.slice(0, 2).map(slot => (
+                  <tr key={slot.id}>
+                    <td className="px-4 py-0 align-middle border-r border-b border-stone-200 bg-stone-50/50">
+                      <p className="text-xs font-semibold text-stone-600">{slot.start}</p>
+                      <p className="text-[10px] text-stone-300 mt-0.5">{slot.end}</p>
+                    </td>
+                    {[0,1,2,3,4].map(day => {
+                      const ev = lessons.find(l => l.day === day && l.slot === slot.id)
+                      const isToday = day === today
+                      if (!ev) return <td key={day} className={`border-r border-b border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }} />
+                      const c = getColor(ev.courseCode)
+                      return (
+                        <td key={day} className={`p-0 border-r border-b border-stone-200 last:border-r-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }}>
+                          <button onClick={() => { setSelectedDay(day); setView("day") }}
+                            className={`w-full h-full text-left px-3 py-2 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
+                            <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
+                            <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
+                          </button>
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
 
-            {/* Header */}
-            <div className="flex bg-stone-50 border-b border-stone-200">
-              <div className="w-16 shrink-0" />
-              {daysShort.map((d, i) => (
-                <button key={d} onClick={() => { setSelectedDay(i); setView("day") }}
-                  className={`flex-1 py-3 text-center border-l transition hover:bg-stone-100 ${
-                    i === today ? "bg-stone-200/40 border-stone-200" : "border-stone-100"
-                  }`}>
-                  <p className={`text-xs tracking-wide ${i === today ? "text-stone-900 font-bold" : "text-stone-500 font-medium"}`}>{d}</p>
-                  <p className={`text-[11px] mt-0.5 ${i === today ? "text-stone-600" : "text-stone-400"}`}>{dates[i]}</p>
-                </button>
-              ))}
-            </div>
+                {/* Lunch */}
+                <tr>
+                  <td className="px-4 py-2 border-r border-b border-stone-200 bg-stone-50/50">
+                    <p className="text-xs font-medium text-stone-400">Lunch</p>
+                  </td>
+                  {[0,1,2,3,4].map(day => {
+                    const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
+                    const gap = findLunch(dayL)
+                    return (
+                      <td key={day} className={`px-2 py-2 border-r border-b border-stone-200 last:border-r-0 text-center ${day === today ? "bg-blue-50/30" : ""}`}>
+                        <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
+                      </td>
+                    )
+                  })}
+                </tr>
 
-            {/* Förmiddag */}
-            {slotsConfig.slice(0, 2).map(slot => (
-              <React.Fragment key={slot.id}>
-                <TimeLine time={slot.start} bold />
-                <div className="flex" style={{ minHeight: 68 }}>
-                  <div className="w-16 shrink-0" />
-                  {[0,1,2,3,4].map(day => <WeekBlock key={day} day={day} slot={slot.id} />)}
-                </div>
-                <TimeLine time={slot.end} />
-              </React.Fragment>
-            ))}
-
-            {/* Lunch */}
-            <div className="flex items-center py-4 bg-stone-50/50">
-              <div className="w-16 shrink-0 pr-3 text-right">
-                <p className="text-[11px] text-stone-400 font-medium">Lunch</p>
-              </div>
-              <div className="flex flex-1">
-                {[0,1,2,3,4].map(day => {
-                  const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
-                  const gap = findLunch(dayL)
-                  return (
-                    <div key={day} className={`flex-1 text-center border-l border-stone-100 ${day === today ? "bg-blue-50/20" : ""}`}>
-                      <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Eftermiddag */}
-            {slotsConfig.slice(2).map(slot => (
-              <React.Fragment key={slot.id}>
-                <TimeLine time={slot.start} bold />
-                <div className="flex" style={{ minHeight: 68 }}>
-                  <div className="w-16 shrink-0" />
-                  {[0,1,2,3,4].map(day => <WeekBlock key={day} day={day} slot={slot.id} />)}
-                </div>
-                <TimeLine time={slot.end} />
-              </React.Fragment>
-            ))}
+                {slotsConfig.slice(2).map(slot => (
+                  <tr key={slot.id}>
+                    <td className="px-4 py-0 align-middle border-r border-b border-stone-200 last:border-b-0 bg-stone-50/50">
+                      <p className="text-xs font-semibold text-stone-600">{slot.start}</p>
+                      <p className="text-[10px] text-stone-300 mt-0.5">{slot.end}</p>
+                    </td>
+                    {[0,1,2,3,4].map(day => {
+                      const ev = lessons.find(l => l.day === day && l.slot === slot.id)
+                      const isToday = day === today
+                      if (!ev) return <td key={day} className={`border-r border-b border-stone-200 last:border-r-0 last:border-b-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }} />
+                      const c = getColor(ev.courseCode)
+                      return (
+                        <td key={day} className={`p-0 border-r border-b border-stone-200 last:border-r-0 last:border-b-0 ${isToday ? "bg-blue-50/30" : ""}`} style={{ height: 72 }}>
+                          <button onClick={() => { setSelectedDay(day); setView("day") }}
+                            className={`w-full h-full text-left px-3 py-2 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
+                            <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
+                            <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
+                          </button>
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
