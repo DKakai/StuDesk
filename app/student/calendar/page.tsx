@@ -47,6 +47,7 @@ const daysFull = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
 const dates = ["12 maj", "13 maj", "14 maj", "15 maj", "16 maj"]
 const dateNums = ["12", "13", "14", "15", "16"]
 const today = 2
+const hourMarks = [8, 9, 10, 11, 12, 13, 14, 15]
 
 function getColor(code: string) {
   return subjectColors[code] || subjectColors[""]
@@ -71,10 +72,6 @@ function findLunch(dayLessons: Lesson[]): { after: string; before: string } | nu
   return result
 }
 
-// Alla unika timmar för veckovy-gridden
-const hourMarks = [8, 9, 10, 11, 12, 13, 14, 15]
-const pxPerMin = 1.2
-
 type ViewMode = "week" | "day"
 
 export default function CalendarPage() {
@@ -85,8 +82,6 @@ export default function CalendarPage() {
   const lunch = findLunch(dayLessons)
   const morningLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) < timeToMin(lunch.before)) : dayLessons
   const afternoonLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) >= timeToMin(lunch.before)) : []
-
-  const dayStart = timeToMin("08:00")
 
   function LessonCard({ ev }: { ev: Lesson }) {
     const c = getColor(ev.courseCode)
@@ -179,55 +174,50 @@ export default function CalendarPage() {
           )}
         </>)}
 
-        {/* VECKOVY — Apple Calendar-stil */}
+        {/* VECKOVY */}
         {view === "week" && (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
-
-            {/* Header med dagar */}
             <div className="flex border-b border-stone-200">
-              <div className="w-16 shrink-0" />
+              <div className="w-14 shrink-0" />
               {daysShort.map((d, i) => (
                 <button key={d} onClick={() => { setSelectedDay(i); setView("day") }}
-                  className={`flex-1 py-4 text-center border-l border-stone-100 transition hover:bg-stone-50 ${i === today ? "bg-stone-50" : ""}`}>
-                  <p className={`text-[11px] uppercase tracking-wider ${i === today ? "text-stone-800 font-semibold" : "text-stone-400"}`}>{d}</p>
-                  <p className={`text-2xl font-medium mt-0.5 ${i === today ? "text-white bg-stone-800 w-9 h-9 rounded-full flex items-center justify-center mx-auto" : "text-stone-700"}`}>
-                    {dateNums[i]}
-                  </p>
+                  className={`flex-1 py-3 text-center border-l border-stone-100 transition hover:bg-stone-50 ${i === today ? "bg-stone-50" : ""}`}>
+                  <p className={`text-[10px] uppercase tracking-wider ${i === today ? "text-stone-800 font-semibold" : "text-stone-400"}`}>{d}</p>
+                  <p className={`text-sm font-medium mt-0.5 ${
+                    i === today
+                      ? "text-white bg-stone-800 w-7 h-7 rounded-full flex items-center justify-center mx-auto text-xs"
+                      : "text-stone-600"
+                  }`}>{dateNums[i]}</p>
                 </button>
               ))}
             </div>
 
-            {/* Tidsgrid */}
-            <div className="relative" style={{ height: hourMarks.length * 60 * pxPerMin }}>
-
-              {/* Horisontella linjer + tidsetiketter */}
+            <div className="relative overflow-y-auto" style={{ height: 480 }}>
               {hourMarks.map(hour => {
-                const top = (hour * 60 - timeToMin("08:00")) * pxPerMin
+                const top = (hour * 60 - timeToMin("08:00")) * 0.75
                 return (
                   <div key={hour} className="absolute left-0 right-0 flex items-start" style={{ top }}>
-                    <div className="w-16 shrink-0 pr-3 text-right -translate-y-2">
-                      <p className="text-xs text-stone-400">{hour.toString().padStart(2, "0")}:00</p>
+                    <div className="w-14 shrink-0 pr-2 text-right -translate-y-2">
+                      <p className="text-[10px] text-stone-400">{hour.toString().padStart(2, "0")}:00</p>
                     </div>
                     <div className="flex-1 border-t border-stone-100" />
                   </div>
                 )
               })}
 
-              {/* Dag-kolumner */}
-              <div className="absolute left-16 right-0 top-0 bottom-0 flex">
+              <div className="absolute left-14 right-0 top-0 bottom-0 flex">
                 {daysShort.map((_, dayIdx) => (
                   <div key={dayIdx} className={`flex-1 relative border-l border-stone-100 ${dayIdx === today ? "bg-blue-50/20" : ""}`}>
                     {lessons.filter(l => l.day === dayIdx).map(ev => {
                       const c = getColor(ev.courseCode)
-                      const top = (timeToMin(ev.startTime) - timeToMin("08:00")) * pxPerMin
-                      const height = (timeToMin(ev.endTime) - timeToMin(ev.startTime)) * pxPerMin
+                      const top = (timeToMin(ev.startTime) - timeToMin("08:00")) * 0.75
+                      const height = (timeToMin(ev.endTime) - timeToMin(ev.startTime)) * 0.75
                       return (
                         <button key={ev.id} onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                          className={`absolute left-1 right-1 rounded-lg border-l-[3px] px-2 py-1.5 text-left transition hover:shadow-md overflow-hidden ${c.bg} ${c.border}`}
-                          style={{ top, height: Math.max(height, 28) }}>
-                          <p className={`text-[11px] font-semibold ${c.text} leading-tight truncate`}>{ev.title}</p>
-                          {height > 40 && <p className="text-[10px] text-stone-400 truncate mt-0.5">{ev.room}</p>}
-                          {height > 55 && <p className="text-[10px] text-stone-400 truncate">{ev.startTime}–{ev.endTime}</p>}
+                          className={`absolute left-0.5 right-0.5 rounded-md border-l-[3px] px-1.5 py-1 text-left transition hover:shadow-md overflow-hidden ${c.bg} ${c.border}`}
+                          style={{ top, height: Math.max(height, 24) }}>
+                          <p className={`text-[10px] font-semibold ${c.text} leading-tight truncate`}>{ev.title}</p>
+                          {height > 32 && <p className="text-[9px] text-stone-400 truncate">{ev.room}</p>}
                         </button>
                       )
                     })}
