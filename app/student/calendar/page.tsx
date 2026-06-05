@@ -26,7 +26,7 @@ const lessons: Lesson[] = [
 
   { id:"l5", title:"Fysik 1 — Labb",  courseCode:"FY1", type:"lab",    day:1, startTime:"08:15", endTime:"09:15", room:"Labbsal A", teacher:"Per Ekström" },
   { id:"l6", title:"Fysik 1 — Labb",  courseCode:"FY1", type:"lab",    day:1, startTime:"09:30", endTime:"10:30", room:"Labbsal A", teacher:"Per Ekström" },
-  { id:"l7", title:"Svenska 1",       courseCode:"SV1", type:"lesson", day:1, startTime:"13:00", endTime:"14:00", room:"R102", teacher:"Karin Holm" },
+  { id:"l7", title:"Svenska 1",       courseCode:"SV1", type:"lesson", day:1, startTime:"12:15", endTime:"13:15", room:"R102", teacher:"Karin Holm" },
   { id:"l8", title:"Historia 1b",     courseCode:"HI1B",type:"lesson", day:1, startTime:"14:15", endTime:"15:15", room:"R102", teacher:"Karin Holm" },
 
   { id:"l9",  title:"Historia 1b",        courseCode:"HI1B",type:"lesson", day:2, startTime:"08:15", endTime:"09:15", room:"R102", teacher:"Karin Holm" },
@@ -195,16 +195,14 @@ export default function CalendarPage() {
             {/* Förmiddag */}
             {weekSlots.slice(0, 2).map(time => (
               <div key={time}>
-                {/* Tidslinje */}
                 <div className="grid grid-cols-6 border-b border-stone-100">
                   <div className="px-4 py-1">
                     <p className="text-xs font-medium text-stone-500 -translate-y-0.5">{time}</p>
                   </div>
                   {daysShort.map((_, i) => <div key={i} className={`${i === today ? "bg-stone-50/50" : ""}`} />)}
                 </div>
-                {/* Block */}
                 <div className="grid grid-cols-6">
-                  <div className={`${today === -1 ? "" : ""}`} />
+                  <div />
                   {daysShort.map((_, dayIdx) => {
                     const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
                     if (!ev) return <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }} />
