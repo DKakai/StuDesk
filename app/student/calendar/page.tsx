@@ -223,13 +223,24 @@ export default function CalendarPage() {
               </div>
             ))}
 
-            {/* Lunch */}
-            <div className="py-3 bg-stone-50/50">
-              <div className="flex items-center gap-3 px-4">
-                <div className="flex-1 h-px bg-stone-200" />
+            {/* Lunch — per dag */}
+            <div className="grid grid-cols-6 py-3 bg-stone-50/50">
+              <div className="px-4 flex items-center">
                 <p className="text-xs text-stone-400 font-medium">Lunch</p>
-                <div className="flex-1 h-px bg-stone-200" />
               </div>
+              {daysShort.map((_, dayIdx) => {
+                const dayL = lessons.filter(l => l.day === dayIdx).sort((a, b) => a.startTime.localeCompare(b.startTime))
+                const gap = findLunch(dayL)
+                return (
+                  <div key={dayIdx} className={`px-2 flex items-center justify-center ${dayIdx === today ? "bg-stone-100/30" : ""}`}>
+                    {gap ? (
+                      <p className="text-[10px] text-stone-300">{gap.after}–{gap.before}</p>
+                    ) : (
+                      <p className="text-[10px] text-stone-200">—</p>
+                    )}
+                  </div>
+                )
+              })}
             </div>
 
             {/* Eftermiddag */}
