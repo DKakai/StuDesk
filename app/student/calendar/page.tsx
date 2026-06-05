@@ -186,12 +186,10 @@ export default function CalendarPage() {
             </div>
 
             {scheduleRows.map((row: any, idx: number) => {
-              // Tomt glapp (rast)
               if (row.type === "gap") {
                 return <div key={`gap-${idx}`} className="h-3" />
               }
 
-              // Lunch
               if (row.type === "lunch") {
                 return (
                   <div key="lunch" className="flex items-center py-3">
@@ -211,29 +209,32 @@ export default function CalendarPage() {
                 )
               }
 
-              // Lektionspass
               const slot = row as { id: number; start: string; end: string }
               return (
                 <div key={`slot-${slot.id}`}>
-                  {/* Startlinje med tid */}
-                  <div className="flex items-center">
-                    <div className="w-20 shrink-0 flex items-center justify-end">
-                      <p className="text-[11px] text-stone-600 font-semibold pr-1">{slot.start}</p>
-                      <div className="w-3 border-t border-stone-300" />
-                    </div>
-                    <div className="flex-1 border-t border-stone-200" />
-                  </div>
-
-                  {/* Block */}
                   <div className="flex" style={{ minHeight: 68 }}>
-                    <div className="w-20 shrink-0" />
+                    {/* Tidskolumn — tiderna vid överkant och underkant */}
+                    <div className="w-20 shrink-0 flex flex-col justify-between items-end">
+                      <div className="flex items-center -translate-y-[1px]">
+                        <p className="text-[11px] text-stone-600 font-semibold pr-1">{slot.start}</p>
+                        <div className="w-3 border-t border-stone-300" />
+                      </div>
+                      <div className="flex items-center translate-y-[1px]">
+                        <p className="text-[11px] text-stone-300 pr-1">{slot.end}</p>
+                        <div className="w-3 border-t border-stone-200" />
+                      </div>
+                    </div>
+
+                    {/* Dagkolumner med border-top och border-bottom */}
                     {[0,1,2,3,4].map(day => {
                       const ev = lessons.find(l => l.day === day && l.slot === slot.id)
                       const isToday = day === today
-                      if (!ev) return <div key={day} className={`flex-1 border-l border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`} />
+                      if (!ev) return (
+                        <div key={day} className={`flex-1 border-l border-t border-b border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`} />
+                      )
                       const c = getColor(ev.courseCode)
                       return (
-                        <div key={day} className={`flex-1 border-l border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`}>
+                        <div key={day} className={`flex-1 border-l border-t border-b border-stone-200 ${isToday ? "bg-blue-50/20" : ""}`}>
                           <button onClick={() => { setSelectedDay(day); setView("day") }}
                             className={`w-full h-full text-left px-3 py-2.5 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
                             <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
@@ -242,15 +243,6 @@ export default function CalendarPage() {
                         </div>
                       )
                     })}
-                  </div>
-
-                  {/* Slutlinje med tid */}
-                  <div className="flex items-center">
-                    <div className="w-20 shrink-0 flex items-center justify-end">
-                      <p className="text-[11px] text-stone-300 pr-1">{slot.end}</p>
-                      <div className="w-3 border-t border-stone-200" />
-                    </div>
-                    <div className="flex-1 border-t border-stone-100" />
                   </div>
                 </div>
               )
