@@ -42,10 +42,10 @@ const lessons: Lesson[] = [
   { id:"l17", title:"Historia 1b",  courseCode:"HI1B",type:"lesson", day:4, startTime:"13:00", endTime:"14:00", room:"R102", teacher:"Karin Holm" },
 ]
 
-const weekSlots = ["08:15", "09:30", "13:00", "14:15"]
 const daysShort = ["Mån", "Tis", "Ons", "Tors", "Fre"]
 const daysFull = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
 const dates = ["12 maj", "13 maj", "14 maj", "15 maj", "16 maj"]
+const dateNums = ["12", "13", "14", "15", "16"]
 const today = 2
 
 function getColor(code: string) {
@@ -71,6 +71,10 @@ function findLunch(dayLessons: Lesson[]): { after: string; before: string } | nu
   return result
 }
 
+// Alla unika timmar för veckovy-gridden
+const hourMarks = [8, 9, 10, 11, 12, 13, 14, 15]
+const pxPerMin = 1.2
+
 type ViewMode = "week" | "day"
 
 export default function CalendarPage() {
@@ -81,6 +85,8 @@ export default function CalendarPage() {
   const lunch = findLunch(dayLessons)
   const morningLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) < timeToMin(lunch.before)) : dayLessons
   const afternoonLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) >= timeToMin(lunch.before)) : []
+
+  const dayStart = timeToMin("08:00")
 
   function LessonCard({ ev }: { ev: Lesson }) {
     const c = getColor(ev.courseCode)
@@ -161,7 +167,6 @@ export default function CalendarPage() {
           ) : (
             <div className="mb-10 space-y-3">
               {morningLessons.map(ev => <LessonCard key={ev.id} ev={ev} />)}
-
               {lunch && (
                 <div className="flex items-center gap-4 py-2">
                   <div className="flex-1 h-px bg-stone-200" />
@@ -169,106 +174,67 @@ export default function CalendarPage() {
                   <div className="flex-1 h-px bg-stone-200" />
                 </div>
               )}
-
               {afternoonLessons.map(ev => <LessonCard key={ev.id} ev={ev} />)}
             </div>
           )}
         </>)}
 
-        {/* VECKOVY */}
+        {/* VECKOVY — Apple Calendar-stil */}
         {view === "week" && (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
-            {/* Header */}
-            <div className="grid grid-cols-6 border-b border-stone-200 bg-stone-50">
-              <div className="px-4 py-4">
-                <p className="text-xs text-stone-400">Tid</p>
-              </div>
+
+            {/* Header med dagar */}
+            <div className="flex border-b border-stone-200">
+              <div className="w-16 shrink-0" />
               {daysShort.map((d, i) => (
-                <div key={d} className={`px-2 py-4 text-center ${i === today ? "bg-stone-100" : ""}`}>
-                  <p className={`text-sm font-medium ${i === today ? "text-stone-900" : "text-stone-600"}`}>{d}</p>
-                  <p className={`text-[11px] mt-0.5 ${i === today ? "text-stone-500" : "text-stone-400"}`}>{dates[i]}</p>
-                  {i === today && <div className="w-1.5 h-1.5 rounded-full bg-stone-800 mx-auto mt-1.5" />}
-                </div>
+                <button key={d} onClick={() => { setSelectedDay(i); setView("day") }}
+                  className={`flex-1 py-4 text-center border-l border-stone-100 transition hover:bg-stone-50 ${i === today ? "bg-stone-50" : ""}`}>
+                  <p className={`text-[11px] uppercase tracking-wider ${i === today ? "text-stone-800 font-semibold" : "text-stone-400"}`}>{d}</p>
+                  <p className={`text-2xl font-medium mt-0.5 ${i === today ? "text-white bg-stone-800 w-9 h-9 rounded-full flex items-center justify-center mx-auto" : "text-stone-700"}`}>
+                    {dateNums[i]}
+                  </p>
+                </button>
               ))}
             </div>
 
-            {/* Förmiddag */}
-            {weekSlots.slice(0, 2).map(time => (
-              <div key={time}>
-                <div className="grid grid-cols-6 border-b border-stone-100">
-                  <div className="px-4 py-1">
-                    <p className="text-xs font-medium text-stone-500 -translate-y-0.5">{time}</p>
-                  </div>
-                  {daysShort.map((_, i) => <div key={i} className={`${i === today ? "bg-stone-50/50" : ""}`} />)}
-                </div>
-                <div className="grid grid-cols-6">
-                  <div />
-                  {daysShort.map((_, dayIdx) => {
-                    const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
-                    if (!ev) return <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }} />
-                    const c = getColor(ev.courseCode)
-                    return (
-                      <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }}>
-                        <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                          className={`w-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
-                          <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
-                          <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
-                        </button>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
+            {/* Tidsgrid */}
+            <div className="relative" style={{ height: hourMarks.length * 60 * pxPerMin }}>
 
-            {/* Lunch — per dag */}
-            <div className="grid grid-cols-6 py-3 bg-stone-50/50">
-              <div className="px-4 flex items-center">
-                <p className="text-xs text-stone-400 font-medium">Lunch</p>
-              </div>
-              {daysShort.map((_, dayIdx) => {
-                const dayL = lessons.filter(l => l.day === dayIdx).sort((a, b) => a.startTime.localeCompare(b.startTime))
-                const gap = findLunch(dayL)
+              {/* Horisontella linjer + tidsetiketter */}
+              {hourMarks.map(hour => {
+                const top = (hour * 60 - timeToMin("08:00")) * pxPerMin
                 return (
-                  <div key={dayIdx} className={`px-2 flex items-center justify-center ${dayIdx === today ? "bg-stone-100/30" : ""}`}>
-                    {gap ? (
-                      <p className="text-[10px] text-stone-300">{gap.after}–{gap.before}</p>
-                    ) : (
-                      <p className="text-[10px] text-stone-200">—</p>
-                    )}
+                  <div key={hour} className="absolute left-0 right-0 flex items-start" style={{ top }}>
+                    <div className="w-16 shrink-0 pr-3 text-right -translate-y-2">
+                      <p className="text-xs text-stone-400">{hour.toString().padStart(2, "0")}:00</p>
+                    </div>
+                    <div className="flex-1 border-t border-stone-100" />
                   </div>
                 )
               })}
-            </div>
 
-            {/* Eftermiddag */}
-            {weekSlots.slice(2).map(time => (
-              <div key={time}>
-                <div className="grid grid-cols-6 border-b border-stone-100">
-                  <div className="px-4 py-1">
-                    <p className="text-xs font-medium text-stone-500 -translate-y-0.5">{time}</p>
-                  </div>
-                  {daysShort.map((_, i) => <div key={i} className={`${i === today ? "bg-stone-50/50" : ""}`} />)}
-                </div>
-                <div className="grid grid-cols-6">
-                  <div />
-                  {daysShort.map((_, dayIdx) => {
-                    const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
-                    if (!ev) return <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }} />
-                    const c = getColor(ev.courseCode)
-                    return (
-                      <div key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ minHeight: 60 }}>
-                        <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                          className={`w-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
-                          <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
-                          <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
+              {/* Dag-kolumner */}
+              <div className="absolute left-16 right-0 top-0 bottom-0 flex">
+                {daysShort.map((_, dayIdx) => (
+                  <div key={dayIdx} className={`flex-1 relative border-l border-stone-100 ${dayIdx === today ? "bg-blue-50/20" : ""}`}>
+                    {lessons.filter(l => l.day === dayIdx).map(ev => {
+                      const c = getColor(ev.courseCode)
+                      const top = (timeToMin(ev.startTime) - timeToMin("08:00")) * pxPerMin
+                      const height = (timeToMin(ev.endTime) - timeToMin(ev.startTime)) * pxPerMin
+                      return (
+                        <button key={ev.id} onClick={() => { setSelectedDay(dayIdx); setView("day") }}
+                          className={`absolute left-1 right-1 rounded-lg border-l-[3px] px-2 py-1.5 text-left transition hover:shadow-md overflow-hidden ${c.bg} ${c.border}`}
+                          style={{ top, height: Math.max(height, 28) }}>
+                          <p className={`text-[11px] font-semibold ${c.text} leading-tight truncate`}>{ev.title}</p>
+                          {height > 40 && <p className="text-[10px] text-stone-400 truncate mt-0.5">{ev.room}</p>}
+                          {height > 55 && <p className="text-[10px] text-stone-400 truncate">{ev.startTime}–{ev.endTime}</p>}
                         </button>
-                      </div>
-                    )
-                  })}
-                </div>
+                      )
+                    })}
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         )}
 
