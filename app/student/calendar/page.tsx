@@ -105,8 +105,8 @@ export default function CalendarPage() {
 
   function TimeLine({ time, bold }: { time: string; bold?: boolean }) {
     return (
-      <div className="flex items-center">
-        <div className="w-16 shrink-0 pr-3 text-right">
+      <div className="flex items-center h-0 relative z-10">
+        <div className="w-16 shrink-0 pr-3 text-right -translate-y-2">
           <p className={`text-[11px] ${bold ? "text-stone-600 font-semibold" : "text-stone-400"}`}>{time}</p>
         </div>
         <div className="flex-1 border-t border-stone-200" />
@@ -116,12 +116,12 @@ export default function CalendarPage() {
 
   function WeekBlock({ day, slot }: { day: number; slot: number }) {
     const ev = lessons.find(l => l.day === day && l.slot === slot)
-    if (!ev) return <div className={`flex-1 ${day === today ? "bg-blue-50/20" : ""}`} />
+    if (!ev) return <div className={`flex-1 border-l border-stone-100 ${day === today ? "bg-blue-50/20" : ""}`} />
     const c = getColor(ev.courseCode)
     return (
-      <div className={`flex-1 px-1 ${day === today ? "bg-blue-50/20" : ""}`}>
+      <div className={`flex-1 border-l border-stone-100 ${day === today ? "bg-blue-50/20" : ""}`}>
         <button onClick={() => { setSelectedDay(day); setView("day") }}
-          className={`w-full h-full text-left px-3 py-2.5 rounded-lg border-l-[3px] transition hover:shadow-md ${c.bg} ${c.border}`}>
+          className={`w-full h-full text-left px-3 py-3 border-l-[3px] transition hover:brightness-95 ${c.bg} ${c.border}`}>
           <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
           <p className="text-[11px] text-stone-500 mt-1 truncate">{ev.room}</p>
         </button>
@@ -215,22 +215,14 @@ export default function CalendarPage() {
             </div>
 
             {/* Förmiddag */}
-            {slotsConfig.slice(0, 2).map((slot, idx) => (
+            {slotsConfig.slice(0, 2).map(slot => (
               <React.Fragment key={slot.id}>
-                {/* Startlinje */}
                 <TimeLine time={slot.start} bold />
-
-                {/* Block */}
-                <div className="flex" style={{ minHeight: 64 }}>
+                <div className="flex" style={{ minHeight: 68 }}>
                   <div className="w-16 shrink-0" />
                   {[0,1,2,3,4].map(day => <WeekBlock key={day} day={day} slot={slot.id} />)}
                 </div>
-
-                {/* Slutlinje */}
                 <TimeLine time={slot.end} />
-
-                {/* Rast mellan pass */}
-                {idx === 0 && <div className="h-2" />}
               </React.Fragment>
             ))}
 
@@ -244,7 +236,7 @@ export default function CalendarPage() {
                   const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
                   const gap = findLunch(dayL)
                   return (
-                    <div key={day} className={`flex-1 text-center ${day === today ? "bg-blue-50/20" : ""}`}>
+                    <div key={day} className={`flex-1 text-center border-l border-stone-100 ${day === today ? "bg-blue-50/20" : ""}`}>
                       <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
                     </div>
                   )
@@ -253,18 +245,14 @@ export default function CalendarPage() {
             </div>
 
             {/* Eftermiddag */}
-            {slotsConfig.slice(2).map((slot, idx) => (
+            {slotsConfig.slice(2).map(slot => (
               <React.Fragment key={slot.id}>
                 <TimeLine time={slot.start} bold />
-
-                <div className="flex" style={{ minHeight: 64 }}>
+                <div className="flex" style={{ minHeight: 68 }}>
                   <div className="w-16 shrink-0" />
                   {[0,1,2,3,4].map(day => <WeekBlock key={day} day={day} slot={slot.id} />)}
                 </div>
-
                 <TimeLine time={slot.end} />
-
-                {idx === 0 && <div className="h-2" />}
               </React.Fragment>
             ))}
           </div>
