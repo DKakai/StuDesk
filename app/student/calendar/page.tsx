@@ -45,18 +45,10 @@ const lessons: Lesson[] = [
 const daysShort = ["Mån", "Tis", "Ons", "Tors", "Fre"]
 const daysFull = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"]
 const dates = ["12 maj", "13 maj", "14 maj", "15 maj", "16 maj"]
-const dateNums = ["12", "13", "14", "15", "16"]
 const today = 2
-const hourMarks = [8, 9, 10, 11, 12, 13, 14, 15]
 
-function getColor(code: string) {
-  return subjectColors[code] || subjectColors[""]
-}
-
-function timeToMin(t: string) {
-  const [h, m] = t.split(":").map(Number)
-  return h * 60 + m
-}
+function getColor(code: string) { return subjectColors[code] || subjectColors[""] }
+function timeToMin(t: string) { const [h, m] = t.split(":").map(Number); return h * 60 + m }
 
 function findLunch(dayLessons: Lesson[]): { after: string; before: string } | null {
   const sorted = [...dayLessons].sort((a, b) => a.startTime.localeCompare(b.startTime))
@@ -64,12 +56,17 @@ function findLunch(dayLessons: Lesson[]): { after: string; before: string } | nu
   let result: { after: string; before: string } | null = null
   for (let i = 0; i < sorted.length - 1; i++) {
     const gap = timeToMin(sorted[i + 1].startTime) - timeToMin(sorted[i].endTime)
-    if (gap > biggest && gap >= 30) {
-      biggest = gap
-      result = { after: sorted[i].endTime, before: sorted[i + 1].startTime }
-    }
+    if (gap > biggest && gap >= 30) { biggest = gap; result = { after: sorted[i].endTime, before: sorted[i + 1].startTime } }
   }
   return result
+}
+
+// Bygg unika tidsslots från all data
+function buildTimeSlots() {
+  const allTimes = [...new Set(lessons.map(l => l.startTime))].sort()
+  const morning = allTimes.filter(t => timeToMin(t) < 720)
+  const afternoon = allTimes.filter(t => timeToMin(t) >= 720)
+  return { morning, afternoon }
 }
 
 type ViewMode = "week" | "day"
@@ -83,10 +80,12 @@ export default function CalendarPage() {
   const morningLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) < timeToMin(lunch.before)) : dayLessons
   const afternoonLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) >= timeToMin(lunch.before)) : []
 
+  const { morning, afternoon } = buildTimeSlots()
+
   function LessonCard({ ev }: { ev: Lesson }) {
     const c = getColor(ev.courseCode)
     return (
-      <div className={`flex items-center rounded-xl border-2 ${c.border} ${c.bg} overflow-hidden`}>
+      <div className={`flex items-center rounded-xl border-2 ${c.border} ${c.bg}`}>
         <div className="w-24 shrink-0 py-4 pl-5">
           <p className="text-sm font-medium text-stone-700">{ev.startTime}</p>
           <p className="text-xs text-stone-400">{ev.endTime}</p>
@@ -104,6 +103,22 @@ export default function CalendarPage() {
           {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
         </div>
       </div>
+    )
+  }
+
+  function WeekCell({ day, time }: { day: number; time: string }) {
+    const ev = lessons.find(l => l.day === day && l.startTime === time)
+    if (!ev) return <td className={`px-1 py-1 ${day === today ? "bg-stone-50/80" : ""}`} />
+    const c = getColor(ev.courseCode)
+    return (
+      <td className={`px-1 py-1 ${day === today ? "bg-stone-50/80" : ""}`}>
+        <button onClick={() => { setSelectedDay(day); setView("day") }}
+          className={`w-full text-left px-3 py-3 rounded-lg border-l-[3px] transition hover:shadow-md ${c.bg} ${c.border}`}>
+          <p className={`text-sm font-semibold ${c.text} truncate`}>{ev.title}</p>
+          <p className="text-xs text-stone-500 mt-1">{ev.startTime}–{ev.endTime}</p>
+          <p className="text-xs text-stone-400 mt-0.5">{ev.room}</p>
+        </button>
+      </td>
     )
   }
 
@@ -177,54 +192,60 @@ export default function CalendarPage() {
         {/* VECKOVY */}
         {view === "week" && (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
-            <div className="flex border-b border-stone-200">
-              <div className="w-14 shrink-0" />
-              {daysShort.map((d, i) => (
-                <button key={d} onClick={() => { setSelectedDay(i); setView("day") }}
-                  className={`flex-1 py-3 text-center border-l border-stone-100 transition hover:bg-stone-50 ${i === today ? "bg-stone-50" : ""}`}>
-                  <p className={`text-[10px] uppercase tracking-wider ${i === today ? "text-stone-800 font-semibold" : "text-stone-400"}`}>{d}</p>
-                  <p className={`text-sm font-medium mt-0.5 ${
-                    i === today
-                      ? "text-white bg-stone-800 w-7 h-7 rounded-full flex items-center justify-center mx-auto text-xs"
-                      : "text-stone-600"
-                  }`}>{dateNums[i]}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="relative overflow-y-auto" style={{ height: 480 }}>
-              {hourMarks.map(hour => {
-                const top = (hour * 60 - timeToMin("08:00")) * 0.75
-                return (
-                  <div key={hour} className="absolute left-0 right-0 flex items-start" style={{ top }}>
-                    <div className="w-14 shrink-0 pr-2 text-right -translate-y-2">
-                      <p className="text-[10px] text-stone-400">{hour.toString().padStart(2, "0")}:00</p>
-                    </div>
-                    <div className="flex-1 border-t border-stone-100" />
-                  </div>
-                )
-              })}
-
-              <div className="absolute left-14 right-0 top-0 bottom-0 flex">
-                {daysShort.map((_, dayIdx) => (
-                  <div key={dayIdx} className={`flex-1 relative border-l border-stone-100 ${dayIdx === today ? "bg-blue-50/20" : ""}`}>
-                    {lessons.filter(l => l.day === dayIdx).map(ev => {
-                      const c = getColor(ev.courseCode)
-                      const top = (timeToMin(ev.startTime) - timeToMin("08:00")) * 0.75
-                      const height = (timeToMin(ev.endTime) - timeToMin(ev.startTime)) * 0.75
-                      return (
-                        <button key={ev.id} onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                          className={`absolute left-0.5 right-0.5 rounded-md border-l-[3px] px-1.5 py-1 text-left transition hover:shadow-md overflow-hidden ${c.bg} ${c.border}`}
-                          style={{ top, height: Math.max(height, 24) }}>
-                          <p className={`text-[10px] font-semibold ${c.text} leading-tight truncate`}>{ev.title}</p>
-                          {height > 32 && <p className="text-[9px] text-stone-400 truncate">{ev.room}</p>}
-                        </button>
-                      )
-                    })}
-                  </div>
+            <table className="w-full table-fixed">
+              <thead>
+                <tr className="border-b border-stone-200 bg-stone-50">
+                  <th className="w-20 py-4 px-3 text-left">
+                    <p className="text-xs text-stone-400">Tid</p>
+                  </th>
+                  {daysShort.map((d, i) => (
+                    <th key={d} className={`py-4 px-1 text-center ${i === today ? "bg-stone-100" : ""}`}>
+                      <button onClick={() => { setSelectedDay(i); setView("day") }} className="hover:opacity-70 transition">
+                        <p className={`text-xs ${i === today ? "text-stone-800 font-semibold" : "text-stone-400"}`}>{d}</p>
+                        <p className={`text-sm font-medium mt-0.5 ${i === today ? "text-stone-800" : "text-stone-600"}`}>{dates[i]}</p>
+                      </button>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {/* Förmiddag */}
+                {morning.map(time => (
+                  <tr key={time} className="border-b border-stone-50">
+                    <td className="px-3 py-1 align-top pt-3">
+                      <p className="text-sm text-stone-400">{time}</p>
+                    </td>
+                    {[0,1,2,3,4].map(day => <WeekCell key={day} day={day} time={time} />)}
+                  </tr>
                 ))}
-              </div>
-            </div>
+
+                {/* Lunch */}
+                <tr className="bg-stone-50/50">
+                  <td className="px-3 py-3">
+                    <p className="text-xs text-stone-400 font-medium">Lunch</p>
+                  </td>
+                  {[0,1,2,3,4].map(day => {
+                    const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
+                    const gap = findLunch(dayL)
+                    return (
+                      <td key={day} className={`px-2 py-3 text-center ${day === today ? "bg-stone-100/30" : ""}`}>
+                        <p className="text-xs text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
+                      </td>
+                    )
+                  })}
+                </tr>
+
+                {/* Eftermiddag */}
+                {afternoon.map(time => (
+                  <tr key={time} className="border-b border-stone-50">
+                    <td className="px-3 py-1 align-top pt-3">
+                      <p className="text-sm text-stone-400">{time}</p>
+                    </td>
+                    {[0,1,2,3,4].map(day => <WeekCell key={day} day={day} time={time} />)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
