@@ -106,7 +106,6 @@ export default function CalendarPage() {
 
         {/* DAGVY */}
         {view === "day" && (<>
-          {/* Dagväljare */}
           <div className="flex gap-2 mb-8">
             {daysShort.map((d, i) => {
               const isSelected = i === selectedDay
@@ -202,34 +201,35 @@ export default function CalendarPage() {
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10">
             <table className="w-full text-sm table-fixed">
               <thead>
-                <tr className="border-b border-stone-100">
-                  <th className="w-20 px-4 py-3 text-left" />
+                <tr className="border-b border-stone-200 bg-stone-50">
+                  <th className="w-20 px-4 py-4 text-left">
+                    <p className="text-xs text-stone-400">Tid</p>
+                  </th>
                   {daysShort.map((d, i) => (
-                    <th key={d} className={`px-1 py-3 text-center ${i === today ? "bg-stone-50" : ""}`}>
-                      <p className={`text-xs font-medium ${i === today ? "text-stone-800" : "text-stone-400"}`}>{d}</p>
-                      <p className={`text-[10px] ${i === today ? "text-stone-500" : "text-stone-300"}`}>{dates[i]}</p>
-                      {i === today && <div className="w-1 h-1 rounded-full bg-stone-800 mx-auto mt-1" />}
+                    <th key={d} className={`px-2 py-4 text-center ${i === today ? "bg-stone-100" : ""}`}>
+                      <p className={`text-sm font-medium ${i === today ? "text-stone-900" : "text-stone-600"}`}>{d}</p>
+                      <p className={`text-[11px] mt-0.5 ${i === today ? "text-stone-500" : "text-stone-400"}`}>{dates[i]}</p>
+                      {i === today && <div className="w-1.5 h-1.5 rounded-full bg-stone-800 mx-auto mt-1.5" />}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {/* Förmiddag */}
                 {weekSlots.slice(0, 2).map(time => (
-                  <tr key={time} className="border-b border-stone-50">
-                    <td className="px-4 py-1 align-top pt-3">
-                      <p className="text-xs text-stone-400">{time}</p>
+                  <tr key={time} className="border-b border-stone-100">
+                    <td className="px-4 py-3 align-middle">
+                      <p className="text-sm font-medium text-stone-500">{time}</p>
                     </td>
                     {daysShort.map((_, dayIdx) => {
                       const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
-                      if (!ev) return <td key={dayIdx} className={`px-1 py-1 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ height: 56 }} />
+                      if (!ev) return <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }} />
                       const c = getColor(ev.courseCode)
                       return (
-                        <td key={dayIdx} className={`px-1 py-1 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ height: 56 }}>
+                        <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }}>
                           <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                            className={`w-full text-left px-2.5 py-2 rounded-lg border transition hover:shadow-sm ${c.bg} ${c.border}`}>
-                            <p className={`text-[11px] font-medium ${c.text} truncate`}>{ev.title}</p>
-                            <p className="text-[9px] text-stone-400 truncate mt-0.5">{ev.room}</p>
+                            className={`w-full h-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
+                            <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
+                            <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
                           </button>
                         </td>
                       )
@@ -237,33 +237,31 @@ export default function CalendarPage() {
                   </tr>
                 ))}
 
-                {/* Lunch */}
                 <tr>
-                  <td colSpan={6} className="py-2">
+                  <td colSpan={6} className="py-3 bg-stone-50/50">
                     <div className="flex items-center gap-3 px-4">
-                      <div className="flex-1 h-px bg-stone-100" />
-                      <p className="text-[10px] text-stone-300">Lunch</p>
-                      <div className="flex-1 h-px bg-stone-100" />
+                      <div className="flex-1 h-px bg-stone-200" />
+                      <p className="text-xs text-stone-400 font-medium">Lunch</p>
+                      <div className="flex-1 h-px bg-stone-200" />
                     </div>
                   </td>
                 </tr>
 
-                {/* Eftermiddag */}
                 {weekSlots.slice(2).map(time => (
-                  <tr key={time} className="border-b border-stone-50">
-                    <td className="px-4 py-1 align-top pt-3">
-                      <p className="text-xs text-stone-400">{time}</p>
+                  <tr key={time} className="border-b border-stone-100">
+                    <td className="px-4 py-3 align-middle">
+                      <p className="text-sm font-medium text-stone-500">{time}</p>
                     </td>
                     {daysShort.map((_, dayIdx) => {
                       const ev = lessons.find(l => l.day === dayIdx && l.startTime === time)
-                      if (!ev) return <td key={dayIdx} className={`px-1 py-1 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ height: 56 }} />
+                      if (!ev) return <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }} />
                       const c = getColor(ev.courseCode)
                       return (
-                        <td key={dayIdx} className={`px-1 py-1 ${dayIdx === today ? "bg-stone-50/50" : ""}`} style={{ height: 56 }}>
+                        <td key={dayIdx} className={`px-1.5 py-1.5 ${dayIdx === today ? "bg-stone-50" : ""}`} style={{ height: 64 }}>
                           <button onClick={() => { setSelectedDay(dayIdx); setView("day") }}
-                            className={`w-full text-left px-2.5 py-2 rounded-lg border transition hover:shadow-sm ${c.bg} ${c.border}`}>
-                            <p className={`text-[11px] font-medium ${c.text} truncate`}>{ev.title}</p>
-                            <p className="text-[9px] text-stone-400 truncate mt-0.5">{ev.room}</p>
+                            className={`w-full h-full text-left px-3 py-2.5 rounded-lg border-2 transition hover:shadow-md ${c.bg} ${c.border}`}>
+                            <p className={`text-xs font-semibold ${c.text}`}>{ev.title}</p>
+                            <p className="text-[11px] text-stone-500 mt-1">{ev.room} · {ev.endTime}</p>
                           </button>
                         </td>
                       )
