@@ -40,11 +40,11 @@ const lessons: Lesson[] = [
 
 const scheduleRows: any[] = [
   { type: "slot", id: 0, start: "08:15", end: "09:15" },
-  { type: "break", label: "09:15–09:30" },
+  { type: "gap" },
   { type: "slot", id: 1, start: "09:30", end: "10:30" },
-  { type: "break", label: "Lunch" },
+  { type: "lunch" },
   { type: "slot", id: 2, start: "13:00", end: "14:00" },
-  { type: "break", label: "14:00–14:15" },
+  { type: "gap" },
   { type: "slot", id: 3, start: "14:15", end: "15:15" },
 ]
 
@@ -98,15 +98,6 @@ export default function CalendarPage() {
           <p className="text-xs text-stone-500">{ev.room}</p>
           {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
         </div>
-      </div>
-    )
-  }
-
-  function TimeLabel({ time, bold }: { time: string; bold?: boolean }) {
-    return (
-      <div className="flex items-center justify-end gap-1">
-        <p className={`text-[11px] ${bold ? "text-stone-600 font-semibold" : "text-stone-300"}`}>{time}</p>
-        <div className={`w-4 border-t ${bold ? "border-stone-300" : "border-stone-200"}`} />
       </div>
     )
   }
@@ -194,37 +185,42 @@ export default function CalendarPage() {
               ))}
             </div>
 
-            {/* Rader */}
             {scheduleRows.map((row: any, idx: number) => {
-              if (row.type === "break") {
-                const isLunch = row.label === "Lunch"
+              // Tomt glapp (rast)
+              if (row.type === "gap") {
+                return <div key={`gap-${idx}`} className="h-3" />
+              }
+
+              // Lunch
+              if (row.type === "lunch") {
                 return (
-                  <div key={`break-${idx}`} className={`flex ${isLunch ? "bg-stone-50/50" : ""}`}>
-                    <div className="w-20 shrink-0 flex items-center justify-end pr-3">
-                      <p className={`text-[10px] ${isLunch ? "text-stone-400 font-medium" : "text-stone-300"}`}>{row.label}</p>
+                  <div key="lunch" className="flex items-center py-3">
+                    <div className="w-20 shrink-0 pr-3 text-right">
+                      <p className="text-[11px] text-stone-400 font-medium">Lunch</p>
                     </div>
                     {[0,1,2,3,4].map(day => {
-                      if (isLunch) {
-                        const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
-                        const gap = findLunch(dayL)
-                        return (
-                          <div key={day} className={`flex-1 border-l border-stone-200 py-2 text-center ${day === today ? "bg-blue-50/20" : ""}`}>
-                            <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
-                          </div>
-                        )
-                      }
-                      return <div key={day} className={`flex-1 border-l border-stone-100 py-1 ${day === today ? "bg-blue-50/10" : ""}`} />
+                      const dayL = lessons.filter(l => l.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime))
+                      const gap = findLunch(dayL)
+                      return (
+                        <div key={day} className={`flex-1 border-l border-stone-100 text-center ${day === today ? "bg-blue-50/20" : ""}`}>
+                          <p className="text-[10px] text-stone-300">{gap ? `${gap.after}–${gap.before}` : "—"}</p>
+                        </div>
+                      )
                     })}
                   </div>
                 )
               }
 
+              // Lektionspass
               const slot = row as { id: number; start: string; end: string }
               return (
                 <div key={`slot-${slot.id}`}>
-                  {/* Starttid */}
+                  {/* Startlinje med tid */}
                   <div className="flex items-center">
-                    <div className="w-20 shrink-0"><TimeLabel time={slot.start} bold /></div>
+                    <div className="w-20 shrink-0 flex items-center justify-end">
+                      <p className="text-[11px] text-stone-600 font-semibold pr-1">{slot.start}</p>
+                      <div className="w-3 border-t border-stone-300" />
+                    </div>
                     <div className="flex-1 border-t border-stone-200" />
                   </div>
 
@@ -234,10 +230,10 @@ export default function CalendarPage() {
                     {[0,1,2,3,4].map(day => {
                       const ev = lessons.find(l => l.day === day && l.slot === slot.id)
                       const isToday = day === today
-                      if (!ev) return <div key={day} className={`flex-1 border-l border-stone-200 ${isToday ? "bg-blue-50/30" : ""}`} />
+                      if (!ev) return <div key={day} className={`flex-1 border-l border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`} />
                       const c = getColor(ev.courseCode)
                       return (
-                        <div key={day} className={`flex-1 border-l border-stone-200 ${isToday ? "bg-blue-50/30" : ""}`}>
+                        <div key={day} className={`flex-1 border-l border-stone-100 ${isToday ? "bg-blue-50/20" : ""}`}>
                           <button onClick={() => { setSelectedDay(day); setView("day") }}
                             className={`w-full h-full text-left px-3 py-2.5 border-l-[3px] ${c.bg} ${c.border} hover:brightness-95 transition`}>
                             <p className={`text-xs font-bold ${c.text} truncate`}>{ev.title}</p>
@@ -248,9 +244,12 @@ export default function CalendarPage() {
                     })}
                   </div>
 
-                  {/* Sluttid */}
+                  {/* Slutlinje med tid */}
                   <div className="flex items-center">
-                    <div className="w-20 shrink-0"><TimeLabel time={slot.end} /></div>
+                    <div className="w-20 shrink-0 flex items-center justify-end">
+                      <p className="text-[11px] text-stone-300 pr-1">{slot.end}</p>
+                      <div className="w-3 border-t border-stone-200" />
+                    </div>
                     <div className="flex-1 border-t border-stone-100" />
                   </div>
                 </div>
