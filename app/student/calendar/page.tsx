@@ -46,6 +46,19 @@ const lessons: Lesson[] = [
   { id:"l16", title:"Matematik 2b",      courseCode:"MA2B", type:"lesson", day:4, slot:0, room:"R201", teacher:"Maria Lindström", startTime:"08:15", endTime:"09:15" },
   { id:"l17", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:4, slot:1, room:"R102", teacher:"Karin Holm",      startTime:"09:30", endTime:"10:30" },
   { id:"l18", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:4, slot:3, room:"R102", teacher:"Karin Holm",      startTime:"12:30", endTime:"13:30" },
+
+// Måndag - extra pass
+  { id:"l19", title:"Fysik 1",           courseCode:"FY1",  type:"lesson", day:0, slot:2, room:"R201", teacher:"Per Ekström",     startTime:"10:45", endTime:"11:30" },
+
+  // Onsdag - extra pass  
+  { id:"l20", title:"Engelska 5",        courseCode:"EN5",  type:"lesson", day:2, slot:2, room:"R108", teacher:"Karin Holm",      startTime:"10:45", endTime:"11:30" },
+
+  // Fredag - extra pass
+  { id:"l21", title:"Samhällskunskap 1b",courseCode:"SH1B", type:"lesson", day:4, slot:2, room:"R112", teacher:"Anna Karlsson",  startTime:"10:45", endTime:"11:30" },
+
+
+
+
 ]
 
 const scheduleRows: any[] = [
