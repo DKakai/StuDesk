@@ -75,32 +75,6 @@ export default function CalendarPage() {
 
   const dayLessons = lessons.filter(l => l.day === selectedDay).sort((a, b) => a.slot - b.slot)
   const lunch = findLunch(dayLessons)
-  const morningLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) < timeToMin(lunch.before)) : dayLessons
-  const afternoonLessons = lunch ? dayLessons.filter(l => timeToMin(l.startTime) >= timeToMin(lunch.before)) : []
-
-  function LessonCard({ ev }: { ev: Lesson }) {
-    const c = getColor(ev.courseCode)
-    return (
-      <div className={`flex items-center rounded-xl border-2 ${c.border} ${c.bg}`}>
-        <div className="w-24 shrink-0 py-4 pl-5">
-          <p className="text-sm font-medium text-stone-700">{ev.startTime}</p>
-          <p className="text-xs text-stone-400">{ev.endTime}</p>
-        </div>
-        <div className="flex-1 py-4 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className={`text-sm font-semibold ${c.text}`}>{ev.title}</p>
-            {ev.type === "lab" && <span className={`text-[9px] ${c.text} opacity-60 border ${c.border} rounded px-1.5 py-0.5`}>Labb</span>}
-            {ev.type === "mentor" && <span className="text-[9px] text-stone-400 border border-stone-200 rounded px-1.5 py-0.5">Mentor</span>}
-          </div>
-          <p className="text-xs text-stone-400 mt-0.5">{ev.teacher}</p>
-        </div>
-        <div className="text-right shrink-0 pr-5 py-4">
-          <p className="text-xs text-stone-500">{ev.room}</p>
-          {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ fontFamily: 'var(--font-body)' }}>
@@ -155,16 +129,70 @@ export default function CalendarPage() {
               <p className="text-sm text-stone-400">Inga lektioner denna dag.</p>
             </div>
           ) : (
-            <div className="mb-10 space-y-3">
-              {morningLessons.map(ev => <LessonCard key={ev.id} ev={ev} />)}
-              {lunch && (
-                <div className="flex items-center gap-4 py-2">
-                  <div className="flex-1 h-px bg-stone-200" />
-                  <p className="text-[11px] text-stone-300">Lunch · {lunch.after}–{lunch.before}</p>
-                  <div className="flex-1 h-px bg-stone-200" />
-                </div>
-              )}
-              {afternoonLessons.map(ev => <LessonCard key={ev.id} ev={ev} />)}
+            <div className="mb-10">
+              {scheduleRows.map((row: any, idx: number) => {
+                if (row.type === "gap") return <div key={`gap-${idx}`} className="h-6" />
+
+                if (row.type === "lunch") {
+                  if (!lunch) return null
+                  return (
+                    <div key="lunch" className="flex items-center py-3">
+                      <div className="w-20 shrink-0 pr-3 text-right">
+                        <p className="text-[11px] text-stone-400 font-medium">Lunch</p>
+                      </div>
+                      <div className="flex-1 flex items-center gap-3">
+                        <div className="flex-1 h-px bg-stone-200" />
+                        <p className="text-[10px] text-stone-300">{lunch.after}–{lunch.before}</p>
+                        <div className="flex-1 h-px bg-stone-200" />
+                      </div>
+                    </div>
+                  )
+                }
+
+                const slot = row as { id: number; start: string; end: string }
+                const ev = dayLessons.find(l => l.slot === slot.id)
+                if (!ev) return null
+
+                const c = getColor(ev.courseCode)
+                return (
+                  <div key={`slot-${slot.id}`} className="relative">
+                    {/* Startlinje */}
+                    <div className="absolute top-0 left-20 right-0 border-t border-stone-200" />
+                    <div className="absolute top-0 left-0 w-20 flex items-center justify-end -translate-y-1/2 z-10">
+                      <p className="text-[11px] text-stone-600 font-semibold bg-[#f5f5f4] px-1 pr-2">{slot.start}</p>
+                    </div>
+
+                    {/* Block */}
+                    <div className="flex" style={{ minHeight: 72 }}>
+                      <div className="w-20 shrink-0" />
+                      <div className="flex-1">
+                        <div className={`h-full px-5 py-3.5 border-l-[3px] ${c.bg} ${c.border}`}>
+                          <div className="flex items-start justify-between">
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className={`text-sm font-bold ${c.text}`}>{ev.title}</p>
+                                {ev.type === "lab" && <span className={`text-[9px] ${c.text} opacity-60 border ${c.border} rounded px-1.5 py-0.5`}>Labb</span>}
+                                {ev.type === "mentor" && <span className="text-[9px] text-stone-400 border border-stone-200 rounded px-1.5 py-0.5">Mentor</span>}
+                              </div>
+                              <p className="text-xs text-stone-400 mt-1">{ev.teacher}</p>
+                            </div>
+                            <div className="text-right shrink-0 ml-4">
+                              <p className="text-xs text-stone-500">{ev.room}</p>
+                              {ev.courseCode && <p className="text-[10px] font-mono text-stone-300 mt-0.5">{ev.courseCode}</p>}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Slutlinje */}
+                    <div className="absolute bottom-0 left-20 right-0 border-t border-stone-200" />
+                    <div className="absolute bottom-0 left-0 w-20 flex items-center justify-end translate-y-1/2 z-10">
+                      <p className="text-[11px] text-stone-600 font-semibold bg-[#f5f5f4] px-1 pr-2">{slot.end}</p>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           )}
         </>)}
@@ -186,9 +214,7 @@ export default function CalendarPage() {
             </div>
 
             {scheduleRows.map((row: any, idx: number) => {
-              if (row.type === "gap") {
-                return <div key={`gap-${idx}`} className="h-6" />
-              }
+              if (row.type === "gap") return <div key={`gap-${idx}`} className="h-6" />
 
               if (row.type === "lunch") {
                 return (
@@ -212,13 +238,11 @@ export default function CalendarPage() {
               const slot = row as { id: number; start: string; end: string }
               return (
                 <div key={`slot-${slot.id}`} className="relative">
-                  {/* Startlinje */}
                   <div className="absolute top-0 left-20 right-0 border-t border-stone-200" />
                   <div className="absolute top-0 left-0 w-20 flex items-center justify-end -translate-y-1/2 z-10">
                     <p className="text-[11px] text-stone-600 font-semibold bg-white px-1 pr-2">{slot.start}</p>
                   </div>
 
-                  {/* Block */}
                   <div className="flex" style={{ minHeight: 68 }}>
                     <div className="w-20 shrink-0" />
                     {[0,1,2,3,4].map(day => {
@@ -238,7 +262,6 @@ export default function CalendarPage() {
                     })}
                   </div>
 
-                  {/* Slutlinje */}
                   <div className="absolute bottom-0 left-20 right-0 border-t border-stone-200" />
                   <div className="absolute bottom-0 left-0 w-20 flex items-center justify-end translate-y-1/2 z-10">
                     <p className="text-[11px] text-stone-600 font-semibold bg-white px-1 pr-2">{slot.end}</p>
