@@ -12,6 +12,7 @@ const courses = [
   { id: "engelska-5", label: "Engelska 5", code: "EN5" },
   { id: "fysik-1", label: "Fysik 1", code: "FY1" },
   { id: "historia-1b", label: "Historia 1b", code: "HI1B" },
+  { id: "samhallskunskap-1b", label: "Samhällskunskap 1b", code: "SH1B" },
 ]
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {
@@ -52,7 +53,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           <p className="text-[10px] uppercase tracking-[0.15em] text-stone-300 px-2 mb-1.5 mt-4">Kurser</p>
           {courses.map((course) => {
             const href = `/student/courses/${course.id}`
-            const isActive = pathname === href
+            const isActive = pathname?.includes(course.id)
             return (
               <Link key={course.id} href={href}
                 className={`w-full flex items-center justify-between px-2.5 py-2 rounded-md text-[13px] transition mb-px ${
