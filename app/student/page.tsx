@@ -34,7 +34,7 @@ const courses = [
   { id: "svenska-1", name: "Svenska 1", code: "SV1", teacher: "Karin Holm", currentTopic: "Argumenterande text", todoCount: 1, image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&q=80" },
   { id: "engelska-5", name: "Engelska 5", code: "EN5", teacher: "Karin Holm", currentTopic: "Oral presentation", todoCount: 0, image: "https://images.unsplash.com/photo-1543109740-4bdb38fda756?w=600&q=80" },
   { id: "fysik-1", name: "Fysik 1", code: "FY1", teacher: "Per Ekström", currentTopic: "Krafter och rörelse", todoCount: 1, image: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=600&q=80" },
-  { id: "historia-1b", name: "Historia 1b", code: "HI1B", teacher: "Karin Holm", currentTopic: "Industriella revolutionen", todoCount: 0, image: "https://images.unsplash.com/photo-1461360370896-922624d12571?w=600&q=80" },
+  { id: "historia-1b", name: "Historia 1b", code: "HI1B", teacher: "Karin Holm", currentTopic: "Industriella revolutionen", todoCount: 0, image: "https://images.unsplash.com/photo-1447069387593-a5de0862481e?w=600&q=80" },
   { id: "samhallskunskap-1b", name: "Samhällskunskap 1b", code: "SH1B", teacher: "Anna Karlsson", currentTopic: "Demokrati och mänskliga rättigheter", todoCount: 0, image: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&q=80" },
 ]
 
