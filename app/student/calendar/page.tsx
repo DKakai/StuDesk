@@ -19,33 +19,45 @@ const subjectColors: Record<string, { bg: string; border: string; text: string }
 }
 
 const lessons: Lesson[] = [
+  // Måndag
   { id:"l1", title:"Matematik 2b",       courseCode:"MA2B", type:"lesson", day:0, slot:0, room:"R201", teacher:"Maria Lindström", startTime:"08:15", endTime:"09:15" },
   { id:"l2", title:"Matematik 2b",       courseCode:"MA2B", type:"lesson", day:0, slot:1, room:"R201", teacher:"Maria Lindström", startTime:"09:30", endTime:"10:30" },
-  { id:"l3", title:"Engelska 5",         courseCode:"EN5",  type:"lesson", day:0, slot:2, room:"R108", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
-  { id:"l4", title:"Mentorstid",         courseCode:"",     type:"mentor", day:0, slot:3, room:"R201", teacher:"Maria Lindström", startTime:"14:15", endTime:"15:00" },
+  { id:"l3", title:"Engelska 5",         courseCode:"EN5",  type:"lesson", day:0, slot:3, room:"R108", teacher:"Karin Holm",      startTime:"12:30", endTime:"13:30" },
+  { id:"l4", title:"Mentorstid",         courseCode:"",     type:"mentor", day:0, slot:4, room:"R201", teacher:"Maria Lindström", startTime:"13:45", endTime:"14:45" },
+
+  // Tisdag
   { id:"l5", title:"Fysik 1 — Labb",    courseCode:"FY1",  type:"lab",    day:1, slot:0, room:"Labbsal A", teacher:"Per Ekström", startTime:"08:15", endTime:"09:15" },
   { id:"l6", title:"Fysik 1 — Labb",    courseCode:"FY1",  type:"lab",    day:1, slot:1, room:"Labbsal A", teacher:"Per Ekström", startTime:"09:30", endTime:"10:30" },
-  { id:"l7", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:1, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
-  { id:"l8", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:1, slot:3, room:"R102", teacher:"Karin Holm",      startTime:"14:15", endTime:"15:15" },
+  { id:"l7", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:1, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"10:45", endTime:"11:30" },
+  { id:"l8", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:1, slot:3, room:"R102", teacher:"Karin Holm",      startTime:"12:30", endTime:"13:30" },
+
+  // Onsdag
   { id:"l9",  title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:2, slot:0, room:"R102", teacher:"Karin Holm",      startTime:"08:15", endTime:"09:15" },
   { id:"l10", title:"Matematik 2b",      courseCode:"MA2B", type:"lesson", day:2, slot:1, room:"R201", teacher:"Maria Lindström", startTime:"09:30", endTime:"10:30" },
-  { id:"l11", title:"Samhällskunskap 1b",courseCode:"SH1B", type:"lesson", day:2, slot:2, room:"R112", teacher:"Anna Karlsson",  startTime:"13:00", endTime:"14:00" },
+  { id:"l11", title:"Samhällskunskap 1b",courseCode:"SH1B", type:"lesson", day:2, slot:3, room:"R112", teacher:"Anna Karlsson",  startTime:"12:30", endTime:"13:30" },
+
+  // Torsdag
   { id:"l12", title:"Engelska 5",        courseCode:"EN5",  type:"lesson", day:3, slot:0, room:"R108", teacher:"Karin Holm",      startTime:"08:15", endTime:"09:15" },
   { id:"l13", title:"Samhällskunskap 1b",courseCode:"SH1B", type:"lesson", day:3, slot:1, room:"R112", teacher:"Anna Karlsson",  startTime:"09:30", endTime:"10:30" },
-  { id:"l14", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:3, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
-  { id:"l15", title:"Matematik 2b",      courseCode:"MA2B", type:"lesson", day:4, slot:0, room:"R201", teacher:"Maria Lindström", startTime:"08:15", endTime:"09:15" },
-  { id:"l16", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:4, slot:1, room:"R102", teacher:"Karin Holm",      startTime:"09:30", endTime:"10:30" },
-  { id:"l17", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:4, slot:2, room:"R102", teacher:"Karin Holm",      startTime:"13:00", endTime:"14:00" },
+  { id:"l14", title:"Fysik 1",           courseCode:"FY1",  type:"lesson", day:3, slot:2, room:"R201", teacher:"Per Ekström",     startTime:"10:45", endTime:"11:30" },
+  { id:"l15", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:3, slot:3, room:"R102", teacher:"Karin Holm",      startTime:"12:30", endTime:"13:30" },
+
+  // Fredag
+  { id:"l16", title:"Matematik 2b",      courseCode:"MA2B", type:"lesson", day:4, slot:0, room:"R201", teacher:"Maria Lindström", startTime:"08:15", endTime:"09:15" },
+  { id:"l17", title:"Svenska 1",         courseCode:"SV1",  type:"lesson", day:4, slot:1, room:"R102", teacher:"Karin Holm",      startTime:"09:30", endTime:"10:30" },
+  { id:"l18", title:"Historia 1b",       courseCode:"HI1B", type:"lesson", day:4, slot:3, room:"R102", teacher:"Karin Holm",      startTime:"12:30", endTime:"13:30" },
 ]
 
 const scheduleRows: any[] = [
   { type: "slot", id: 0, start: "08:15", end: "09:15" },
   { type: "gap" },
   { type: "slot", id: 1, start: "09:30", end: "10:30" },
-  { type: "lunch" },
-  { type: "slot", id: 2, start: "13:00", end: "14:00" },
   { type: "gap" },
-  { type: "slot", id: 3, start: "14:15", end: "15:15" },
+  { type: "slot", id: 2, start: "10:45", end: "11:30" },
+  { type: "lunch" },
+  { type: "slot", id: 3, start: "12:30", end: "13:30" },
+  { type: "gap" },
+  { type: "slot", id: 4, start: "13:45", end: "14:45" },
 ]
 
 const daysShort = ["Mån", "Tis", "Ons", "Tors", "Fre"]
@@ -156,13 +168,11 @@ export default function CalendarPage() {
                 const c = getColor(ev.courseCode)
                 return (
                   <div key={`slot-${slot.id}`} className="relative">
-                    {/* Startlinje */}
                     <div className="absolute top-0 left-20 right-0 border-t border-stone-200" />
                     <div className="absolute top-0 left-0 w-20 flex items-center justify-end -translate-y-1/2 z-10">
                       <p className="text-[11px] text-stone-600 font-semibold bg-[#f5f5f4] px-1 pr-2">{slot.start}</p>
                     </div>
 
-                    {/* Block */}
                     <div className="flex" style={{ minHeight: 72 }}>
                       <div className="w-20 shrink-0" />
                       <div className="flex-1">
@@ -185,7 +195,6 @@ export default function CalendarPage() {
                       </div>
                     </div>
 
-                    {/* Slutlinje */}
                     <div className="absolute bottom-0 left-20 right-0 border-t border-stone-200" />
                     <div className="absolute bottom-0 left-0 w-20 flex items-center justify-end translate-y-1/2 z-10">
                       <p className="text-[11px] text-stone-600 font-semibold bg-[#f5f5f4] px-1 pr-2">{slot.end}</p>
@@ -201,7 +210,6 @@ export default function CalendarPage() {
         {view === "week" && (
           <div className="bg-white border border-stone-200 rounded-xl overflow-hidden mb-10 pb-6">
 
-            {/* Header */}
             <div className="flex border-b border-stone-200 bg-stone-50 mb-4">
               <div className="w-20 shrink-0" />
               {daysShort.map((d, i) => (
